@@ -1,0 +1,17 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import CategoryPage from "./page";
+
+vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
+
+describe("CategoryPage", () => {
+  it("shows only the terms and guides related to the selected category", async () => {
+    const page = await CategoryPage({ params: Promise.resolve({ locale: "tr", slug: "kameralar" }) });
+    render(page);
+
+    expect(screen.getByRole("heading", { name: "Kamera" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Sensör boyutu" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "OLED ekran" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "İlk kamera nasıl seçilir?" })).toBeInTheDocument();
+  });
+});

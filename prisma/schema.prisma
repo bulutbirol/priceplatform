@@ -1,0 +1,305 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Feedback {
+  id                  String   @id @default(cuid())
+  referenceCode       String   @unique
+  type                String
+  pageUrl             String
+  message             String
+  suggestedCorrection String?
+  sourceUrl           String?
+  name                String?
+  email               String?
+  language            String
+  status              String   @default("NEW")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  honeypot            String?
+}
+
+model Category {
+  id               String                @id
+  slug             String
+  locale           String                @default("tr")
+  title            String
+  eyebrow          String
+  shortDescription String
+  body             String
+  icon             String
+  color            String
+  image            String?
+  updatedAt        DateTime
+  reviewedAt       DateTime
+  terms            CategoryTerm[]
+  guides           Guide[]
+  priceFactors     CategoryPriceFactor[]
+  products         Product[]
+  visuals          Visual[]
+
+  @@unique([locale, slug])
+}
+
+model TechnologyTerm {
+  id                        String              @id
+  slug                      String
+  locale                    String              @default("tr")
+  title                     String
+  shortDescription          String
+  summary                   String
+  analogy                   String
+  howItWorks                String
+  whyPriceMatters           String
+  whoShouldCare             String
+  whoCanSkip                String
+  priceImpact               Int
+  userBenefit               Int
+  importanceForAverageUsers Int
+  updatedAt                 DateTime
+  reviewedAt                DateTime
+  categories                CategoryTerm[]
+  sources                   TermSource[]
+  products                  ProductTechnology[]
+  visuals                   Visual[]
+  advantages                TermAdvantage[]
+  disadvantages             TermDisadvantage[]
+  alternatives              TermAlternative[]
+  misunderstandings         TermMisunderstanding[]
+
+  @@unique([locale, slug])
+}
+
+model TermAdvantage {
+  id     String         @id @default(cuid())
+  text   String
+  termId String
+  term   TechnologyTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+
+  @@index([termId])
+}
+
+model TermDisadvantage {
+  id     String         @id @default(cuid())
+  text   String
+  termId String
+  term   TechnologyTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+
+  @@index([termId])
+}
+
+model TermAlternative {
+  id     String         @id @default(cuid())
+  text   String
+  termId String
+  term   TechnologyTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+
+  @@index([termId])
+}
+
+model TermMisunderstanding {
+  id     String         @id @default(cuid())
+  text   String
+  termId String
+  term   TechnologyTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+
+  @@index([termId])
+}
+
+model CategoryTerm {
+  categoryId String
+  termId     String
+  category   Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  term       TechnologyTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+
+  @@id([categoryId, termId])
+  @@index([termId])
+}
+
+model PriceFactor {
+  id                String                @id
+  slug              String
+  locale            String                @default("tr")
+  title             String
+  shortDescription  String
+  body              String
+  impact             String
+  editorialEstimate Boolean               @default(true)
+  updatedAt         DateTime
+  reviewedAt        DateTime
+  categories        CategoryPriceFactor[]
+  breakdowns        PriceBreakdown[]
+
+  @@unique([locale, slug])
+}
+
+model CategoryPriceFactor {
+  categoryId   String
+  priceFactorId String
+  category      Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  priceFactor   PriceFactor @relation(fields: [priceFactorId], references: [id], onDelete: Cascade)
+
+  @@id([categoryId, priceFactorId])
+  @@index([priceFactorId])
+}
+
+model Guide {
+  id               String        @id
+  slug             String
+  locale           String        @default("tr")
+  title            String
+  shortDescription String
+  body             String
+  readingTime      Int
+  updatedAt        DateTime
+  reviewedAt       DateTime
+  categoryId       String
+  category         Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  sources          GuideSource[]
+  sections         GuideSection[]
+
+  @@unique([locale, slug])
+}
+
+model GuideSection {
+  id       String @id @default(cuid())
+  position Int
+  title    String
+  body     String
+  guideId  String
+  guide    Guide  @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@index([guideId])
+  @@unique([guideId, position])
+}
+
+model Brand {
+  id          String    @id
+  slug        String
+  locale      String    @default("tr")
+  name        String
+  positioning String
+  products    Product[]
+
+  @@unique([locale, slug])
+}
+
+model Comparison {
+  id               String   @id
+  slug             String
+  locale           String   @default("tr")
+  title            String
+  shortDescription String
+  body             String
+  quickResult      String
+  updatedAt        DateTime
+  reviewedAt       DateTime
+  rows             ComparisonRow[]
+
+  @@unique([locale, slug])
+}
+
+model ComparisonRow {
+  id           String     @id @default(cuid())
+  position     Int
+  feature      String
+  optionA      String
+  optionB      String
+  comparisonId String
+  comparison   Comparison @relation(fields: [comparisonId], references: [id], onDelete: Cascade)
+
+  @@index([comparisonId])
+  @@unique([comparisonId, position])
+}
+
+model Source {
+  id         String        @id
+  title      String
+  publisher  String
+  url        String
+  accessDate DateTime
+  sourceType String
+  language   String
+  terms      TermSource[]
+  guides     GuideSource[]
+}
+
+model TermSource {
+  termId   String
+  sourceId String
+  term     TechnologyTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+  source   Source         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@id([termId, sourceId])
+  @@index([sourceId])
+}
+
+model GuideSource {
+  guideId  String
+  sourceId String
+  guide    Guide  @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  source   Source @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@id([guideId, sourceId])
+  @@index([sourceId])
+}
+
+model Product {
+  id           String              @id @default(cuid())
+  slug         String
+  name         String
+  locale       String              @default("tr")
+  categoryId   String
+  brandId      String
+  category     Category            @relation(fields: [categoryId], references: [id])
+  brand        Brand               @relation(fields: [brandId], references: [id])
+  technologies ProductTechnology[]
+  breakdowns   PriceBreakdown[]
+
+  @@unique([locale, slug])
+}
+
+model ProductTechnology {
+  productId String
+  termId    String
+  product   Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  term      TechnologyTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+
+  @@id([productId, termId])
+  @@index([termId])
+}
+
+model PriceBreakdown {
+  id            String      @id @default(cuid())
+  productId     String
+  priceFactorId String
+  impact        String
+  explanation   String
+  estimateMin   Float?
+  estimateMax   Float?
+  product       Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  priceFactor   PriceFactor @relation(fields: [priceFactorId], references: [id])
+
+  @@index([productId])
+  @@index([priceFactorId])
+}
+
+model Visual {
+  id         String          @id @default(cuid())
+  kind       String
+  src        String?
+  alt        String
+  diagramKey String?
+  categoryId String?
+  termId     String?
+  category   Category?       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  term       TechnologyTerm? @relation(fields: [termId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+  @@index([termId])
+}

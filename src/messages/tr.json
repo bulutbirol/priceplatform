@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "title": "Fiyatın Anatomisi",
+    "description": "Teknolojik ürünlerin fiyatını oluşturan parçaları basitçe anlayın."
+  },
+  "common": {
+    "siteName": "Fiyatın Anatomisi",
+    "tagline": "Neye para verdiğini bil.",
+    "searchPlaceholder": "Bir teknoloji veya ürün kategorisi ara",
+    "exploreCategories": "Kategorileri keşfet",
+    "learnPricing": "Fiyatlandırmayı öğren",
+    "feedback": "Geri bildirim gönder",
+    "theme": "Tema",
+    "language": "Dil"
+  },
+  "home": {
+    "heroTitle": "Bir ürünün fiyatında ne var?",
+    "heroDescription": "Teknoloji, üretim, marka ve pazarlama etkisini sade bir dille anlayın.",
+    "popularCategories": "Kategoriler",
+    "pricingFactors": "Fiyatı belirleyen unsurlar",
+    "howItWorks": "Nasıl çalışır?",
+    "featuredGuides": "Öne çıkan rehberler",
+    "feedbackSectionTitle": "İçeriği birlikte iyileştirelim",
+    "feedbackSectionDescription": "Yanlış, eski veya eksik bir bilgi gördüğünüzde bize bildirin.",
+    "disclaimer": "Bu site bağımsız bir eğitim platformudur. Değerlendirmeler kesin maliyet hesabı değildir."
+  },
+  "navigation": {
+    "categories": "Kategoriler",
+    "guides": "Rehberler",
+    "comparisons": "Karşılaştırmalar",
+    "pricingFactors": "Fiyat Faktörleri",
+    "feedback": "Geri Bildirim"
+  }
+}

@@ -1,0 +1,4 @@
+import Link from "next/link";
+import { ArrowRight, Clock3 } from "lucide-react";
+import { getAllGuides } from "@/lib/content-queries";
+export default async function GuidesPage({ params }) { const { locale } = await params; const guides = await getAllGuides(); return <div className="listing-page shell section-space"><header className="listing-hero"><p className="eyebrow">Satın alma kararından önce</p><h1>Rehberler</h1><p>Teknik özellikleri kullanım ihtiyacına, toplam maliyete ve gerçek faydaya çeviren kısa okuma rotaları.</p></header><div className="article-list">{guides.map((guide, index) => <Link href={`/${locale}/guides/${guide.slug}`} key={guide.slug}><span>0{index + 1}</span><div><small>{guide.category.title}</small><h2>{guide.title}</h2><p>{guide.shortDescription}</p></div><strong><Clock3 /> {guide.readingTime} dk</strong><ArrowRight /></Link>)}</div></div>; }

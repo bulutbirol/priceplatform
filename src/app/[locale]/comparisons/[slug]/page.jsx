@@ -1,0 +1,3 @@
+import { notFound } from "next/navigation";
+import { getComparisonBySlug } from "@/lib/content-queries";
+export default async function ComparisonPage({ params }) { const { slug } = await params; const item = await getComparisonBySlug(slug); if (!item) notFound(); return <article className="comparison-page shell section-space"><header><p className="eyebrow">Yan yana, sade cevap</p><h1>{item.title}</h1><p>{item.quickResult}</p></header>{item.rows.length ? <div className="comparison-table" role="table">{item.rows.map((row) => <div role="row" key={row.id}><strong>{row.feature}</strong><span>{row.optionA}</span><span>{row.optionB}</span></div>)}</div> : <div className="empty-state"><h2>Hızlı sonuç</h2><p>{item.body}</p></div>}</article>; }

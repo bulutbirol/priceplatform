@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "title": "Price Explained",
+    "description": "Comprenez vraiment ce que vous payez pour les produits technologiques."
+  },
+  "common": {
+    "siteName": "Price Explained",
+    "tagline": "Comprenez vraiment ce que vous payez.",
+    "searchPlaceholder": "Recherchez une technologie, une fonctionnalité ou une catégorie de produit",
+    "exploreCategories": "Explorer les catégories",
+    "learnPricing": "Apprendre comment la tarification fonctionne",
+    "feedback": "Envoyer des commentaires",
+    "theme": "Thème",
+    "language": "Langue"
+  },
+  "home": {
+    "heroTitle": "Comprenez pourquoi les produits technologiques coûtent plus cher.",
+    "heroDescription": "Découvrez quelles fonctionnalités comptent vraiment, lesquelles font augmenter le prix et si elles valent la peine d'être payées.",
+    "popularCategories": "Catégories populaires",
+    "pricingFactors": "Facteurs de prix",
+    "howItWorks": "Comment ça marche",
+    "featuredGuides": "Guides en vedette",
+    "feedbackSectionTitle": "Aidez-nous à garder l'information utile",
+    "feedbackSectionDescription": "Si vous remarquez des informations inexactes, obsolètes, manquantes ou peu claires, faites-le nous savoir.",
+    "disclaimer": "Ce site web est une plateforme éducative indépendante. Son contenu est compilé à partir de sources publiques et de recherches en ligne. Nous ne sommes ni ingénieurs, ni fabricants, ni techniciens certifiés, ni conseillers financiers. Les informations peuvent évoluer et contenir des erreurs. Vérifiez toujours les détails importants avec le fabricant ou un professionnel agréé avant de prendre une décision d'achat."
+  },
+  "navigation": {
+    "categories": "Catégories",
+    "guides": "Guides",
+    "comparisons": "Comparaisons",
+    "pricingFactors": "Facteurs de prix",
+    "feedback": "Commentaires"
+  }
+}
