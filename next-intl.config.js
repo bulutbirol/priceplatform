@@ -1,7 +1,0 @@
-import { defineRouting } from "next-intl/routing";
-export const routing = defineRouting({
-    locales: ["tr"],
-    defaultLocale: "tr",
-    localePrefix: "always",
-});
-export default routing;
