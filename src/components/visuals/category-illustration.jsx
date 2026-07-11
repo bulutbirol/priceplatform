@@ -1,4 +1,4 @@
-import { AirVent, Camera, CookingPot, Refrigerator, Smartphone, Sparkles, Tv, WashingMachine, Wind } from "lucide-react";
+import { AirVent, Camera, CookingPot, Package, Refrigerator, Smartphone, Sparkles, Tv, WashingMachine, Wind } from "lucide-react";
 
 const iconSets = {
   telefonlar: [Smartphone, Camera, Sparkles],
@@ -14,7 +14,7 @@ const iconSets = {
 };
 
 export function CategoryIllustration({ slug, title }) {
-  const [Primary, Secondary, Tertiary] = iconSets[slug] || iconSets.telefonlar;
+  const [Primary, Secondary, Tertiary] = iconSets[slug] || [Package, Sparkles, Package];
   return (
     <div className={`category-illustration category-illustration--${slug}`} role="img" aria-label={`${title} teknolojileri illüstrasyonu`}>
       <span className="category-illustration__orbit" />

@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client-taxonomy"
 }
 
 datasource db {
@@ -35,6 +36,8 @@ model Category {
   icon             String
   color            String
   image            String?
+  groupId          String?
+  group            CategoryGroup?        @relation(fields: [groupId], references: [id], onDelete: SetNull)
   updatedAt        DateTime
   reviewedAt       DateTime
   terms            CategoryTerm[]
@@ -42,6 +45,19 @@ model Category {
   priceFactors     CategoryPriceFactor[]
   products         Product[]
   visuals          Visual[]
+
+  @@unique([locale, slug])
+  @@index([groupId])
+}
+
+model CategoryGroup {
+  id          String     @id
+  slug        String
+  locale      String     @default("tr")
+  title       String
+  description String
+  position    Int
+  categories  Category[]
 
   @@unique([locale, slug])
 }

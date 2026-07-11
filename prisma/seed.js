@@ -1,8 +1,10 @@
-import { PrismaClient } from "@prisma/client";
-import { brands, categories, comparisons, guides, pricingFactors, sourceData, terms } from "../src/lib/content.js";
+import { PrismaClient } from "../node_modules/.prisma/client-taxonomy/index.js";
+import { brands, categories, categoryGroups, comparisons, guides, pricingFactors, sourceData, terms } from "../src/lib/content.js";
+import { staleCanonicalIds } from "../src/lib/seed-sync.js";
 
 const prisma = new PrismaClient();
 const categoryIdBySlug = new Map(categories.map((category) => [category.slug, category.id]));
+const categoryGroupIdBySlug = new Map(categoryGroups.map((group) => [group.slug, group.id]));
 const asDate = (value) => new Date(value);
 
 async function seedSources() {
@@ -13,9 +15,15 @@ async function seedSources() {
 }
 
 async function seedCategories() {
-  for (const { contentType, status, guideCount, ...category } of categories) {
-    const data = { ...category, updatedAt: asDate(category.updatedAt), reviewedAt: asDate(category.reviewedAt) };
+  for (const { contentType, status, guideCount, groupSlug, ...category } of categories) {
+    const data = { ...category, groupId: categoryGroupIdBySlug.get(groupSlug) || null, updatedAt: asDate(category.updatedAt), reviewedAt: asDate(category.reviewedAt) };
     await prisma.category.upsert({ where: { id: category.id }, update: data, create: data });
+  }
+}
+
+async function seedCategoryGroups() {
+  for (const { products, ...group } of categoryGroups) {
+    await prisma.categoryGroup.upsert({ where: { id: group.id }, update: group, create: group });
   }
 }
 
@@ -38,6 +46,9 @@ async function seedTerms() {
       await tx.termMisunderstanding.createMany({ data: commonMisunderstandings.map((text, index) => ({ id: `${term.id}-myth-${index}`, text, termId: term.id })) });
     });
   }
+  const existingIds = (await prisma.technologyTerm.findMany({ select: { id: true } })).map(({ id }) => id);
+  const staleIds = staleCanonicalIds(existingIds, terms.map(({ id }) => id), "term-");
+  if (staleIds.length) await prisma.technologyTerm.deleteMany({ where: { id: { in: staleIds } } });
 }
 
 async function seedFactors() {
@@ -80,10 +91,10 @@ async function seedBrandsAndComparisons() {
 }
 
 async function seed() {
-  await seedSources(); await seedCategories(); await seedTerms(); await seedFactors(); await seedGuides(); await seedBrandsAndComparisons();
+  await seedSources(); await seedCategoryGroups(); await seedCategories(); await seedTerms(); await seedFactors(); await seedGuides(); await seedBrandsAndComparisons();
 }
 
 seed().then(async () => {
-  console.log(`Seeded ${categories.length} categories, ${terms.length} terms and ${guides.length} guides without deleting existing content.`);
+  console.log(`Synchronized ${categories.length} categories, ${terms.length} terms and ${guides.length} guides.`);
   await prisma.$disconnect();
 }).catch(async (error) => { console.error(error); await prisma.$disconnect(); process.exit(1); });

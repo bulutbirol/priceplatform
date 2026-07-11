@@ -1,42 +1,51 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import HomePage from "./page";
-
-vi.mock("next-intl/server", () => ({
-  getTranslations: vi.fn(async ({ namespace }) => (key) => ({
-    "home.heroTitle": "Understand why technology products cost more",
-    "home.heroDescription": "A simple explanation.",
-    "home.pricingFactors": "Pricing factors",
-    "home.popularCategories": "Popular categories",
-    "home.howItWorks": "How it works",
-    "home.featuredGuides": "Featured guides",
-    "home.feedbackSectionTitle": "Feedback",
-    "home.feedbackSectionDescription": "Feedback description",
-    "home.disclaimer": "Disclaimer",
-    "common.siteName": "Price Explained",
-    "common.searchPlaceholder": "Search",
-    "common.exploreCategories": "Explore",
-    "common.learnPricing": "Learn",
-    "common.feedback": "Feedback",
-  })[`${namespace}.${key}`] ?? key),
-}));
 
 describe("HomePage", () => {
   it("leads with a simple explanation of product pricing", async () => {
     const page = await HomePage({ params: Promise.resolve({ locale: "tr" }) });
     render(page);
 
-    expect(screen.getByRole("heading", { name: /Bir ürünün fiyatında ne var/i })).toBeInTheDocument();
-    expect(screen.getAllByText(/Marka primi/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/PR ve pazarlama/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole("heading", { name: "Hangi ürünün fiyatını anlamak istiyorsun?" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Platform içeriği")).toHaveTextContent("72 ürün türü");
+    expect(screen.getByLabelText("Platform içeriği")).toHaveTextContent("1700+ teknik terim");
   });
 
-  it("shows all nine primary product categories", async () => {
+  it("shows all nine upper product groups", async () => {
     const page = await HomePage({ params: Promise.resolve({ locale: "tr" }) });
     render(page);
 
-    for (const category of ["Telefon", "Kamera", "Televizyon", "Buzdolabı", "Çamaşır Makinesi", "Bulaşık Makinesi", "Kurutma Makinesi", "Fırın", "Klima"]) {
-      expect(screen.getByRole("heading", { name: category })).toBeInTheDocument();
+    for (const group of [
+      "Kişisel Teknoloji",
+      "Görüntü ve Eğlence",
+      "Büyük Ev Aletleri",
+      "Küçük Mutfak Aletleri",
+      "Temizlik ve Hava",
+      "Akıllı Ev ve Güvenlik",
+      "Enerji Sistemleri",
+      "Kişisel Bakım",
+      "Ev, Atölye ve Bahçe",
+    ]) {
+      expect(screen.getByRole("heading", { name: group })).toBeInTheDocument();
     }
+  });
+
+  it("keeps the catalog search-first and opens product groups progressively", async () => {
+    const page = await HomePage({ params: Promise.resolve({ locale: "tr" }) });
+    render(page);
+
+    expect(screen.getByRole("textbox", { name: "Teknoloji ara" })).toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: "Bir ürün fiyatını oluşturan katmanlar" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Kişisel Teknoloji/ })).toHaveAttribute("href", "/tr/groups/kisisel-teknoloji");
+  });
+
+  it("renders the English catalog entry page", async () => {
+    const page = await HomePage({ params: Promise.resolve({ locale: "en" }) });
+    render(page);
+
+    expect(screen.getByRole("heading", { name: "Which product price do you want to understand?" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Personal Technology" })).toBeInTheDocument();
+    expect(screen.getByText(/Technical articles are being translated/i)).toBeInTheDocument();
   });
 });

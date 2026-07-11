@@ -1,15 +1,25 @@
 import Link from "next/link";
-import { ArrowDownRight } from "lucide-react";
-import { CategoryIllustration } from "@/components/visuals/category-illustration";
-import { getAllCategories } from "@/lib/content-queries";
+import { ArrowRight } from "lucide-react";
+import { getAllCategoryGroups } from "@/lib/content-queries";
+import { localizeGroups } from "@/lib/locale-copy";
 
 export default async function CategoriesPage({ params }) {
   const { locale } = await params;
-  const categories = await getAllCategories(locale);
+  const groups = localizeGroups(await getAllCategoryGroups(locale), locale);
+  const english = locale === "en";
+
   return <div className="listing-page shell section-space">
-    <header className="listing-hero"><p className="eyebrow">Dokuz ürün dünyası</p><h1>Kategoriler</h1><p>Bir ürünün fiyatını büyüten teknolojiyi, üretim kararlarını ve görünmeyen maliyetleri kategori kategori keşfet.</p></header>
-    <div className="category-grid">{categories.map((category, index) => <Link className={`category-card category-card--${category.color}`} href={`/${locale}/categories/${category.slug}`} key={category.slug}>
-      <div className="category-card__meta"><span>0{index + 1}</span><small>{category._count.terms} terim · {category._count.guides} rehber</small></div><CategoryIllustration slug={category.slug} title={category.title} /><div className="category-card__copy"><h2>{category.title}</h2><p>{category.shortDescription}</p></div><ArrowDownRight className="category-card__arrow" />
-    </Link>)}</div>
+    <header className="listing-hero">
+      <p className="eyebrow">{english ? "A technology atlas for the home" : "Evin içindeki teknoloji atlası"}</p>
+      <h1>{english ? "Product categories" : "Ürün kategorileri"}</h1>
+      <p>{english ? "All products are organized into nine clear groups. Choose a group first, then the product." : "Aradığın ürünü kolay bulmak için tüm ürünleri dokuz anlaşılır gruba ayırdık. Önce grubu, sonra ürünü seç."}</p>
+    </header>
+    <div className="product-catalog" aria-label="Ürün grupları">
+      {groups.map((group, index) => <Link href={`/${locale}/groups/${group.slug}`} className="group-catalog-item" key={group.slug}>
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        <div><h2>{group.title}</h2><p>{group.description}</p><small>{group._count.categories} {english ? "product types" : "ürün türü"}</small></div>
+        <ArrowRight aria-hidden="true" />
+      </Link>)}
+    </div>
   </div>;
 }

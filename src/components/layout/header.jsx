@@ -79,7 +79,7 @@ export function Header({ locale }) {
   ];
 
   const handleLocaleChange = (nextLocale) => {
-    const path = pathname.replace(/^\/tr/, `/${nextLocale}`);
+    const path = pathname.replace(/^\/(tr|en)/, `/${nextLocale}`);
     router.push(path || `/${nextLocale}`);
   };
 
@@ -110,6 +110,7 @@ export function Header({ locale }) {
             <Globe2 aria-hidden="true" size={16} />
             <select value={currentLocale} onChange={(event) => handleLocaleChange(event.target.value)}>
               <option value="tr">TR</option>
+              <option value="en">EN</option>
             </select>
           </label>
           <button

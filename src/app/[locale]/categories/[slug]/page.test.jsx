@@ -23,4 +23,12 @@ describe("CategoryPage", () => {
     expect(screen.getByRole("heading", { name: "Çamaşır Makinesi" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Klima" })).toBeInTheDocument();
   });
+
+  it("does not render empty term sections for newer product categories", async () => {
+    const page = await CategoryPage({ params: Promise.resolve({ locale: "tr", slug: "robot-supurgeler" }) });
+    render(page);
+
+    expect(screen.queryByText("0 terim")).not.toBeInTheDocument();
+    expect(screen.getAllByText(/terim$/).length).toBeGreaterThan(0);
+  });
 });

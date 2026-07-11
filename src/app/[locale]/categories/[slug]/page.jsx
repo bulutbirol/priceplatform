@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, BookOpen, CircleDollarSign, Scale } from "lucide-react";
 import { CategoryIllustration } from "@/components/visuals/category-illustration";
 import { getAllCategories, getCategoryBySlug } from "@/lib/content-queries";
+import { groupPriceFactors } from "@/lib/content-grouping";
 
 export default async function CategoryPage({ params }) {
   const { locale, slug } = await params;
@@ -26,7 +27,8 @@ export default async function CategoryPage({ params }) {
   const groupedTerms = termGroupTitles.map((title, groupIndex) => ({
     title,
     terms: category.terms.slice(groupIndex * 10, groupIndex * 10 + 10),
-  }));
+  })).filter((group) => group.terms.length > 0);
+  const groupedFactors = groupPriceFactors(category.priceFactors.map(({ priceFactor }) => priceFactor));
 
   return (
     <div className="category-page">
@@ -36,18 +38,18 @@ export default async function CategoryPage({ params }) {
       </header>
       <section className="category-factor-band"><div className="shell">
         <div className="category-factor-band__intro"><CircleDollarSign /><p className="kicker">Bu kategoride fiyatı ne büyütür?</p><h2>Etiketin görünmeyen tarafı</h2></div>
-        <div className="category-factor-chips">{category.priceFactors.map(({ priceFactor }) => <span key={priceFactor.slug}><strong>{priceFactor.title}</strong><small>{priceFactor.impact} etki</small></span>)}</div>
+        <div className="compact-disclosures">{groupedFactors.map((group, index) => <details key={group.slug} open={index === 0}><summary><span>{group.title}</span><small>{group.items.length} etken</small></summary><div className="category-factor-chips">{group.items.map((factor) => <span key={factor.slug}><strong>{factor.title}</strong><small>{factor.impact} etki</small></span>)}</div></details>)}</div>
         <p className="editorial-note">Etki seviyeleri editoryal değerlendirmedir; kesin maliyet oranı değildir.</p>
       </div></section>
       <section className="category-terms shell section-space">
         <div className="section-heading"><div><span className="section-index">01</span><p className="kicker">Teknoloji sözlüğü</p></div><h2>Terimi öğren,<br />pazarlamayı ayıkla.</h2></div>
-        <div className="category-term-groups">{groupedTerms.map((group, groupIndex) => <section key={group.title}>
-          <header><span>0{groupIndex + 1}</span><h3>{group.title}</h3></header>
+        <div className="category-term-groups">{groupedTerms.map((group, groupIndex) => <details key={group.title} open={groupIndex === 0}>
+          <summary><span>0{groupIndex + 1}</span><h3>{group.title}</h3><small>{group.terms.length} terim</small></summary>
           <div className="category-term-list">{group.terms.map(({ term }, index) => <Link href={`/${locale}/terms/${term.slug}`} key={term.slug}>
             <span>{String(groupIndex * 10 + index + 1).padStart(2, "0")}</span><div><h3>{term.title}</h3><p>{term.shortDescription}</p></div>
             <div className="mini-tradeoff"><small>+</small>{term.advantages[0]?.text}<small>−</small>{term.disadvantages[0]?.text}</div><ArrowRight aria-hidden="true" />
           </Link>)}</div>
-        </section>)}</div>
+        </details>)}</div>
       </section>
       <section className="category-guides shell section-space">
         <div className="category-guides__intro"><BookOpen /><p className="kicker">Satın alma rehberleri</p><h2>Bilgiyi karara dönüştür.</h2><p>Teknik özellikleri tek başına değil, kullanım amacın ve toplam maliyetle birlikte düşün.</p></div>

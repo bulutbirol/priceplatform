@@ -1,6 +1,9 @@
 import { expansionCategories, expansionFactorSpecs, expansionGuideSpecs, expansionReviewedAt, expansionTermGroups } from "./content-expansion.js";
 import { scaleFactorSpecs, scaleGuideSpecs, scaleReviewedAt, scaleTermGroups } from "./content-scale.js";
 import { calculateReadingTime } from "./reading-time.js";
+import { categoryGroups, productCategoryGroupBySlug, wholeHomeCategories, wholeHomeFactorSpecs, wholeHomeGuideSpecs, wholeHomeReviewedAt, wholeHomeTermGroups } from "./whole-home-taxonomy.js";
+
+export { categoryGroups };
 
 export const locales = ["tr", "en", "de", "es", "fr"];
 
@@ -74,7 +77,15 @@ export const categories = [
     updatedAt: expansionReviewedAt,
     reviewedAt: expansionReviewedAt,
   })),
-];
+  ...wholeHomeCategories.map((category) => ({
+    ...category,
+    contentType: "category",
+    status: "PUBLISHED",
+    guideCount: 3,
+    updatedAt: wholeHomeReviewedAt,
+    reviewedAt: wholeHomeReviewedAt,
+  })),
+].map((category) => ({ ...category, groupSlug: category.groupSlug || productCategoryGroupBySlug[category.slug] || null }));
 
 const baseTermGroups = {
   telefonlar: [
@@ -148,8 +159,8 @@ const baseTermGroups = {
 };
 
 const termGroups = Object.fromEntries(
-  [...new Set([...Object.keys(baseTermGroups), ...Object.keys(expansionTermGroups), ...Object.keys(scaleTermGroups)])]
-    .map((slug) => [slug, [...(baseTermGroups[slug] || []), ...(expansionTermGroups[slug] || []), ...(scaleTermGroups[slug] || [])]]),
+  [...new Set([...Object.keys(baseTermGroups), ...Object.keys(expansionTermGroups), ...Object.keys(scaleTermGroups), ...Object.keys(wholeHomeTermGroups)])]
+    .map((slug) => [slug, [...(baseTermGroups[slug] || []), ...(expansionTermGroups[slug] || []), ...(scaleTermGroups[slug] || []), ...(wholeHomeTermGroups[slug] || [])]]),
 );
 
 const categoryAudience = {
@@ -177,12 +188,12 @@ export const terms = Object.entries(termGroups).flatMap(([categorySlug, specs], 
     summary,
     body: summary,
     analogy,
-    howItWorks: `${title}, ilgili donanım ile kontrol yazılımının birlikte çalışmasıyla görevini yerine getirir. Sonuç; ürünün uygulama biçimine ve üreticinin ayarlarına göre değişebilir.`,
-    whyPriceMatters: `${title} için ek bileşen, hassas üretim, lisans veya yazılım geliştirme gerekebilir. Bu nedenle ürünün maliyetini ve pazardaki konumunu etkiler.`,
+    howItWorks: `${title}, ürün içinde belirli bir görevi üstlenir ve çevresindeki parçaların tasarımıyla birlikte sonuç verir. Çalışma biçimi ürün sınıfına ve üreticinin uygulamasına göre değişebilir.`,
+    whyPriceMatters: `${title} için kullanılan malzeme, kapasite, üretim hassasiyeti, güvenlik testi ve montaj yöntemi maliyeti değiştirebilir.`,
     advantages: [advantage],
     disadvantages: [disadvantage],
-    whoShouldCare: categoryAudience[categorySlug][0],
-    whoCanSkip: categoryAudience[categorySlug][1],
+    whoShouldCare: (categoryAudience[categorySlug] || ["Bu ürün türünü düzenli kullanan ve performans farkını önemseyenler", "Ürünü seyrek ve yalnızca temel işlevlerle kullananlar"])[0],
+    whoCanSkip: (categoryAudience[categorySlug] || ["Bu ürün türünü düzenli kullanan ve performans farkını önemseyenler", "Ürünü seyrek ve yalnızca temel işlevlerle kullananlar"])[1],
     alternatives: [],
     commonMisunderstandings: [`${title} tek başına ürünün genel kalitesini belirlemez.`],
     priceImpact: ((index + categoryIndex) % 5) + 1,
@@ -219,8 +230,8 @@ const baseGuideSpecs = {
 };
 
 const guideSpecs = Object.fromEntries(
-  [...new Set([...Object.keys(baseGuideSpecs), ...Object.keys(expansionGuideSpecs), ...Object.keys(scaleGuideSpecs)])]
-    .map((slug) => [slug, [...(baseGuideSpecs[slug] || []), ...(expansionGuideSpecs[slug] || []), ...(scaleGuideSpecs[slug] || [])]]),
+  [...new Set([...Object.keys(baseGuideSpecs), ...Object.keys(expansionGuideSpecs), ...Object.keys(scaleGuideSpecs), ...Object.keys(wholeHomeGuideSpecs)])]
+    .map((slug) => [slug, [...(baseGuideSpecs[slug] || []), ...(expansionGuideSpecs[slug] || []), ...(scaleGuideSpecs[slug] || []), ...(wholeHomeGuideSpecs[slug] || [])]]),
 );
 
 export const guides = Object.entries(guideSpecs).flatMap(([categorySlug, specs], categoryIndex) =>
@@ -300,6 +311,17 @@ export const pricingFactors = [
     editorialEstimate: true,
     updatedAt: scaleReviewedAt,
     reviewedAt: scaleReviewedAt,
+  })),
+  ...wholeHomeFactorSpecs.map((factor, index) => ({
+    id: `factor-home-${index + 1}`,
+    ...factor,
+    locale: "tr",
+    contentType: "pricing-factor",
+    status: "PUBLISHED",
+    body: factor.shortDescription,
+    editorialEstimate: true,
+    updatedAt: wholeHomeReviewedAt,
+    reviewedAt: wholeHomeReviewedAt,
   })),
 ];
 
