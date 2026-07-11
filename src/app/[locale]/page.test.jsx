@@ -31,11 +31,11 @@ describe("HomePage", () => {
     expect(screen.getAllByText(/PR ve pazarlama/i).length).toBeGreaterThan(0);
   });
 
-  it("shows all four launch categories", async () => {
+  it("shows all nine primary product categories", async () => {
     const page = await HomePage({ params: Promise.resolve({ locale: "tr" }) });
     render(page);
 
-    for (const category of ["Telefon", "Kamera", "Televizyon", "Beyaz Eşya"]) {
+    for (const category of ["Telefon", "Kamera", "Televizyon", "Buzdolabı", "Çamaşır Makinesi", "Bulaşık Makinesi", "Kurutma Makinesi", "Fırın", "Klima"]) {
       expect(screen.getByRole("heading", { name: category })).toBeInTheDocument();
     }
   });

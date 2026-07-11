@@ -1,8 +1,12 @@
+import { expansionCategories, expansionFactorSpecs, expansionGuideSpecs, expansionReviewedAt, expansionTermGroups } from "./content-expansion.js";
+import { scaleFactorSpecs, scaleGuideSpecs, scaleReviewedAt, scaleTermGroups } from "./content-scale.js";
+import { calculateReadingTime } from "./reading-time.js";
+
 export const locales = ["tr", "en", "de", "es", "fr"];
 
 const reviewedAt = "2026-07-10";
 
-export const categories = [
+const baseCategories = [
   {
     id: "category-phone",
     slug: "telefonlar",
@@ -60,7 +64,19 @@ export const categories = [
   reviewedAt,
 }));
 
-const termGroups = {
+export const categories = [
+  ...baseCategories,
+  ...expansionCategories.map((category) => ({
+    ...category,
+    contentType: "category",
+    status: "PUBLISHED",
+    guideCount: 3,
+    updatedAt: expansionReviewedAt,
+    reviewedAt: expansionReviewedAt,
+  })),
+];
+
+const baseTermGroups = {
   telefonlar: [
     ["oled-ekran", "OLED ekran", "Her pikselin kendi ışığını ürettiği ekran teknolojisi.", "Siyah görüntüde lambayı kısmak yerine o pikselin ışığını tamamen kapatmak gibidir.", "Çok güçlü kontrast ve ince panel sağlar.", "Üretimi pahalıdır; uzun süre sabit görüntüde iz riski olabilir."],
     ["ltpo", "LTPO", "Ekran yenileme hızını ihtiyaca göre geniş aralıkta değiştiren panel altyapısı.", "Trafik yokken yavaşlayıp gerektiğinde hızlanan akıllı bir yürüyen bant gibi çalışır.", "Akıcı görüntüyü daha düşük pil tüketimiyle sunabilir.", "Panel ve kontrol devresi maliyetini yükseltir."],
@@ -131,11 +147,22 @@ const termGroups = {
   ],
 };
 
+const termGroups = Object.fromEntries(
+  [...new Set([...Object.keys(baseTermGroups), ...Object.keys(expansionTermGroups), ...Object.keys(scaleTermGroups)])]
+    .map((slug) => [slug, [...(baseTermGroups[slug] || []), ...(expansionTermGroups[slug] || []), ...(scaleTermGroups[slug] || [])]]),
+);
+
 const categoryAudience = {
   telefonlar: ["Yoğun telefon kullananlar ve mobil fotoğraf çekenler", "Temel mesajlaşma ve arama yapanlar"],
   kameralar: ["Fotoğraf ve video üretiminde kontrol isteyenler", "Yalnızca gündelik anı fotoğrafı çekenler"],
   televizyonlar: ["Film, spor veya oyun deneyimine önem verenler", "Çoğunlukla haber ve gündüz yayını izleyenler"],
   "beyaz-esya": ["Cihazı uzun yıllar ve sık kullanacak evler", "Seyrek kullanan veya kısa süreli çözüm arayanlar"],
+  buzdolaplari: ["Gıdayı uzun süre saklayan ve enerji giderini önemseyen evler", "Geçici veya çok düşük hacimli çözüm arayanlar"],
+  "camasir-makineleri": ["Sık yıkama yapan ve sessizlik ile dayanıklılık arayan evler", "Çok seyrek ve düşük yükte yıkama yapanlar"],
+  "bulasik-makineleri": ["Her gün bulaşık yıkayan ve su tasarrufu isteyen evler", "Çok az bulaşığı elde yıkayanlar"],
+  "kurutma-makineleri": ["Sık çamaşır yıkayan ve kapalı alanda hızlı kurutma isteyenler", "Çamaşırını doğal yolla rahatça kurutabilenler"],
+  firinlar: ["Düzenli yemek ve hamur işi pişiren kullanıcılar", "Yalnızca temel ve seyrek ısıtma yapanlar"],
+  klimalar: ["Uzun süre iklimlendirme kullanan ve verimlilik isteyenler", "Yılda birkaç gün kısa süreli serinleme isteyenler"],
 };
 
 export const terms = Object.entries(termGroups).flatMap(([categorySlug, specs], categoryIndex) =>
@@ -168,7 +195,7 @@ export const terms = Object.entries(termGroups).flatMap(([categorySlug, specs], 
   })),
 );
 
-const guideSpecs = {
+const baseGuideSpecs = {
   telefonlar: [
     ["telefon-fiyati-nasil-okunur", "Telefon fiyatı nasıl okunur?", "Ekran, kamera, işlemci ve yazılım desteği arasında bütçe payını anlamanın kısa yolu."],
     ["telefon-kamerasi-secme", "Telefon kamerasında neye bakmalı?", "Megapiksel yarışının ötesinde sensör, lens ve sabitlemeyi karşılaştır."],
@@ -191,6 +218,11 @@ const guideSpecs = {
   ],
 };
 
+const guideSpecs = Object.fromEntries(
+  [...new Set([...Object.keys(baseGuideSpecs), ...Object.keys(expansionGuideSpecs), ...Object.keys(scaleGuideSpecs)])]
+    .map((slug) => [slug, [...(baseGuideSpecs[slug] || []), ...(expansionGuideSpecs[slug] || []), ...(scaleGuideSpecs[slug] || [])]]),
+);
+
 export const guides = Object.entries(guideSpecs).flatMap(([categorySlug, specs], categoryIndex) =>
   specs.map(([slug, title, shortDescription], index) => ({
     id: `guide-${categoryIndex + 1}-${index + 1}`,
@@ -202,7 +234,11 @@ export const guides = Object.entries(guideSpecs).flatMap(([categorySlug, specs],
     shortDescription,
     body: shortDescription,
     categorySlug,
-    readingTime: 6 + index,
+    readingTime: calculateReadingTime([
+      "En pahalı özellik yerine her gün fark edeceğin özelliğe bütçe ayır.",
+      "Teknik özellikleri birbirleriyle ve gerçek kullanım koşullarıyla birlikte değerlendir.",
+      "Yazılım, enerji, bakım, servis ve ikinci el değerini satın alma fiyatına ekle.",
+    ]),
     sections: [
       { title: "Önce kullanımını tanımla", body: "En pahalı özellik yerine her gün fark edeceğin özelliğe bütçe ayır." },
       { title: "Tek bir sayıya güvenme", body: "Teknik özellikleri birbirleriyle ve gerçek kullanım koşullarıyla birlikte değerlendir." },
@@ -214,7 +250,7 @@ export const guides = Object.entries(guideSpecs).flatMap(([categorySlug, specs],
   })),
 );
 
-export const pricingFactors = [
+const basePricingFactors = [
   ["bilesen-kalitesi", "Bileşen kalitesi", "Daha dayanıklı, hızlı veya hassas parçalar ürünün doğrudan maliyetini artırır.", "yüksek"],
   ["uretim-karmasikligi", "Üretim karmaşıklığı", "Hassas montaj, düşük hata payı ve kalite kontrol daha fazla zaman ve yatırım gerektirir.", "yüksek"],
   ["arge", "Araştırma ve geliştirme", "Yeni teknoloji, prototip, test ve yazılım geliştirme giderleri ürün ailesine dağıtılır.", "orta"],
@@ -240,6 +276,32 @@ export const pricingFactors = [
   updatedAt: reviewedAt,
   reviewedAt,
 }));
+
+export const pricingFactors = [
+  ...basePricingFactors,
+  ...expansionFactorSpecs.map((factor, index) => ({
+    id: `factor-expansion-${index + 1}`,
+    ...factor,
+    locale: "tr",
+    contentType: "pricing-factor",
+    status: "PUBLISHED",
+    body: factor.shortDescription,
+    editorialEstimate: true,
+    updatedAt: expansionReviewedAt,
+    reviewedAt: expansionReviewedAt,
+  })),
+  ...scaleFactorSpecs.map((factor, index) => ({
+    id: `factor-scale-${index + 1}`,
+    ...factor,
+    locale: "tr",
+    contentType: "pricing-factor",
+    status: "PUBLISHED",
+    body: factor.shortDescription,
+    editorialEstimate: true,
+    updatedAt: scaleReviewedAt,
+    reviewedAt: scaleReviewedAt,
+  })),
+];
 
 export const brands = [
   ["apple", "Apple", "premium"], ["samsung", "Samsung", "geniş ürün ailesi"], ["xiaomi", "Xiaomi", "değer odaklı"],

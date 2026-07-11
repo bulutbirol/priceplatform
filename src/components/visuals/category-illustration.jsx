@@ -1,10 +1,16 @@
-import { Camera, CookingPot, Refrigerator, Smartphone, Sparkles, Tv, WashingMachine } from "lucide-react";
+import { AirVent, Camera, CookingPot, Refrigerator, Smartphone, Sparkles, Tv, WashingMachine, Wind } from "lucide-react";
 
 const iconSets = {
   telefonlar: [Smartphone, Camera, Sparkles],
   kameralar: [Camera, Sparkles, Camera],
   televizyonlar: [Tv, Sparkles, Tv],
   "beyaz-esya": [WashingMachine, Refrigerator, CookingPot],
+  buzdolaplari: [Refrigerator, Sparkles, Refrigerator],
+  "camasir-makineleri": [WashingMachine, Sparkles, WashingMachine],
+  "bulasik-makineleri": [CookingPot, Sparkles, WashingMachine],
+  "kurutma-makineleri": [Wind, Sparkles, WashingMachine],
+  firinlar: [CookingPot, Sparkles, CookingPot],
+  klimalar: [AirVent, Wind, Sparkles],
 };
 
 export function CategoryIllustration({ slug, title }) {

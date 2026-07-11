@@ -1,4 +1,9 @@
 import { prisma } from "./prisma";
+import { calculateReadingTime } from "./reading-time";
+
+function withReadingTime(guide) {
+  return { ...guide, readingTime: calculateReadingTime([guide.body, ...(guide.sections || []).map((section) => section.body)]) };
+}
 
 const termRelations = {
   advantages: true,
@@ -11,22 +16,22 @@ const termRelations = {
 
 export async function getHomeContent(locale = "tr") {
   const [categories, terms, pricingFactors, guides, comparisons] = await Promise.all([
-    prisma.category.findMany({ where: { locale }, orderBy: { id: "asc" } }),
+    prisma.category.findMany({ where: { locale, NOT: { slug: "beyaz-esya" } }, orderBy: { id: "asc" } }),
     prisma.technologyTerm.findMany({ where: { locale }, take: 6, orderBy: { id: "asc" } }),
     prisma.priceFactor.findMany({
       where: { locale, slug: { in: ["bilesen-kalitesi", "arge", "marka-primi", "pr-pazarlama", "vergi", "servis-agi"] } },
       orderBy: { id: "asc" },
     }),
-    prisma.guide.findMany({ where: { locale }, take: 4, orderBy: { id: "asc" }, include: { category: true } }),
+    prisma.guide.findMany({ where: { locale }, take: 4, orderBy: { id: "asc" }, include: { category: true, sections: { orderBy: { position: "asc" } } } }),
     prisma.comparison.findMany({ where: { locale }, take: 3, orderBy: { id: "asc" } }),
   ]);
 
-  return { categories, terms, pricingFactors, guides, comparisons };
+  return { categories, terms, pricingFactors, guides: guides.map(withReadingTime), comparisons };
 }
 
 export async function getAllCategories(locale = "tr") {
   return prisma.category.findMany({
-    where: { locale }, orderBy: { id: "asc" },
+    where: { locale, NOT: { slug: "beyaz-esya" } }, orderBy: { id: "asc" },
     include: { _count: { select: { terms: true, guides: true } } },
   });
 }
@@ -51,14 +56,16 @@ export async function getAllTerms(locale = "tr") {
 }
 
 export async function getAllGuides(locale = "tr") {
-  return prisma.guide.findMany({ where: { locale }, orderBy: { id: "asc" }, include: { category: true, sections: { orderBy: { position: "asc" } } } });
+  const guides = await prisma.guide.findMany({ where: { locale }, orderBy: { id: "asc" }, include: { category: true, sections: { orderBy: { position: "asc" } } } });
+  return guides.map(withReadingTime);
 }
 
 export async function getGuideBySlug(slug, locale = "tr") {
-  return prisma.guide.findUnique({
+  const guide = await prisma.guide.findUnique({
     where: { locale_slug: { locale, slug } },
     include: { category: true, sections: { orderBy: { position: "asc" } }, sources: { include: { source: true } } },
   });
+  return guide ? withReadingTime(guide) : null;
 }
 
 export async function getAllFactors(locale = "tr") {

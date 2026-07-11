@@ -1,19 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Check, Lightbulb, Minus, Plus, Quote, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { ArticleInfobox, ArticleSection, ProsCons, ReadingLayout } from "@/components/reading/article-layout";
 import { TermDiagram } from "@/components/visuals/term-diagram";
 import { getTermBySlug } from "@/lib/content-queries";
 
-function ImpactMeter({ label, value, hint }) {
-  return (
-    <div className="impact-meter">
-      <div><span>{label}</span><strong>{value}/5</strong></div>
-      <div className="impact-meter__track" aria-label={`${label}: 5 üzerinden ${value}`}>
-        {Array.from({ length: 5 }, (_, index) => <i key={index} className={index < value ? "is-active" : ""} />)}
-      </div>
-      <small>{hint}</small>
-    </div>
-  );
+function ImpactScale({ label, value }) {
+  return <div><dt>{label}</dt><dd>{value}/5</dd></div>;
 }
 
 export default async function TermPage({ params }) {
@@ -21,61 +14,80 @@ export default async function TermPage({ params }) {
   const term = await getTermBySlug(slug, locale);
   if (!term) notFound();
 
+  const category = term.categories[0]?.category;
+  const reviewedAt = new Intl.DateTimeFormat("tr-TR").format(term.reviewedAt);
+  const toc = [
+    { id: "kisa-ozet", label: "Kısaca" },
+    { id: "nasil-calisir", label: "Nasıl çalışır?" },
+    { id: "fiyat-etkisi", label: "Fiyatı neden etkiler?" },
+    { id: "artilar-eksiler", label: "Artıları ve eksileri" },
+    { id: "kim-onemsemeli", label: "Kim önemsemeli?" },
+    { id: "degerlendirme", label: "Editoryal değerlendirme" },
+    { id: "kaynaklar", label: "Kaynaklar" },
+  ];
+
+  const infobox = (
+    <ArticleInfobox items={[
+      { label: "Terim", value: term.title },
+      { label: "Kategori", value: category?.title },
+      { label: "Fiyata etkisi", value: `${term.priceImpact}/5` },
+      { label: "Kullanıcı faydası", value: `${term.userBenefit}/5` },
+      { label: "Son inceleme", value: reviewedAt },
+    ]} />
+  );
+
   return (
-    <article className="term-page">
-      <header className="term-hero shell">
-        <div className="term-hero__copy">
-          <Link href={`/${locale}/categories/${term.categories[0]?.category.slug || "telefonlar"}`} className="back-link"><ArrowLeft size={15} /> Kategoriye dön</Link>
-          <p className="eyebrow">Teknoloji sözlüğü · 30 saniyede</p>
-          <h1>{term.title}</h1>
-          <p className="term-hero__summary">{term.summary}</p>
-          <div className="term-category-tags">
-            {term.categories.map(({ category }) => <Link key={category.slug} href={`/${locale}/categories/${category.slug}`}>{category.title}</Link>)}
-          </div>
+    <article className="term-page encyclopedia-page">
+      <header className="article-header shell">
+        <Link href={`/${locale}/categories/${category?.slug || "telefonlar"}`} className="back-link"><ArrowLeft size={15} /> Kategoriye dön</Link>
+        <p className="article-kicker">Teknoloji sözlüğü</p>
+        <h1>{term.title}</h1>
+        <p className="article-lead">{term.summary}</p>
+        <div className="article-categories">
+          {term.categories.map(({ category: item }) => <Link key={item.slug} href={`/${locale}/categories/${item.slug}`}>{item.title}</Link>)}
         </div>
-        <TermDiagram term={term} />
       </header>
 
-      <div className="term-body shell">
-        <section className="analogy-card">
-          <Quote aria-hidden="true" />
-          <div><p className="kicker">Aklında şöyle canlandır</p><h2>{term.analogy}</h2></div>
-        </section>
+      <ReadingLayout title={term.title} toc={toc} infobox={infobox}>
+        <ArticleSection id="kisa-ozet" title="Kısaca">
+          <p className="article-analogy"><strong>Basit benzetme:</strong> {term.analogy}</p>
+          <TermDiagram term={term} />
+        </ArticleSection>
 
-        <div className="term-explainer-grid">
-          <section><span className="explainer-icon"><Lightbulb /></span><p className="kicker">Nasıl çalışır?</p><h2>İşin basit mantığı</h2><p>{term.howItWorks}</p></section>
-          <section><span className="explainer-icon"><Plus /></span><p className="kicker">Fiyatı neden etkiler?</p><h2>Etikete eklenen kısım</h2><p>{term.whyPriceMatters}</p></section>
-        </div>
+        <ArticleSection id="nasil-calisir" title="Nasıl çalışır?">
+          <p>{term.howItWorks}</p>
+        </ArticleSection>
 
-        <section className="tradeoff-section">
-          <div className="section-mini-heading"><p className="kicker">Denge tablosu</p><h2>Kazandırdığı ve götürdüğü</h2></div>
-          <div className="tradeoff-grid">
-            <div className="tradeoff-card tradeoff-card--pro"><span><Check /> Fayda</span><h3>Artıları</h3><ul>{term.advantages.map((item) => <li key={item.id}><Plus />{item.text}</li>)}</ul></div>
-            <div className="tradeoff-card tradeoff-card--con"><span><X /> Bedel</span><h3>Eksileri</h3><ul>{term.disadvantages.map((item) => <li key={item.id}><Minus />{item.text}</li>)}</ul></div>
-          </div>
-        </section>
+        <ArticleSection id="fiyat-etkisi" title="Fiyatı neden etkiler?">
+          <p>{term.whyPriceMatters}</p>
+        </ArticleSection>
 
-        <section className="audience-section">
-          <div className="audience-card audience-card--care"><span>EVET</span><div><p className="kicker">Kararında ağırlık ver</p><h2>Kim önemsemeli?</h2><p>{term.whoShouldCare}</p></div></div>
-          <div className="audience-card audience-card--skip"><span>PAS</span><div><p className="kicker">Bütçeni başka yere ayır</p><h2>Kim ekstra para vermemeli?</h2><p>{term.whoCanSkip}</p></div></div>
-        </section>
+        <ArticleSection id="artilar-eksiler" title="Artıları ve eksileri">
+          <ProsCons advantages={term.advantages} disadvantages={term.disadvantages} />
+        </ArticleSection>
 
-        <section className="impact-section">
-          <div className="impact-section__intro"><p className="kicker">Editoryal değerlendirme</p><h2>Ne kadar fark yaratır?</h2><p>Bu puanlar mutlak teknik ölçüm değil, ortalama kullanım için açıklamalı değerlendirmedir.</p></div>
-          <div className="impact-list">
-            <ImpactMeter label="Fiyata etkisi" value={term.priceImpact} hint="Ürünün maliyet ve konumlandırmasına etkisi" />
-            <ImpactMeter label="Kullanıcı faydası" value={term.userBenefit} hint="Doğru kullanımda hissedilen günlük katkı" />
-            <ImpactMeter label="Ortalama kullanıcı için önem" value={term.importanceForAverageUsers} hint="Çoğu kişinin satın alma kararındaki ağırlığı" />
-          </div>
-        </section>
+        <ArticleSection id="kim-onemsemeli" title="Kim önemsemeli?">
+          <h3>Önem vermesi gerekenler</h3>
+          <p>{term.whoShouldCare}</p>
+          <h3>Kim ekstra para vermemeli?</h3>
+          <p>{term.whoCanSkip}</p>
+        </ArticleSection>
 
-        <footer className="term-sources">
-          <p className="kicker">Kaynak durumu ve şeffaflık</p>
-          <p>Bu ilk içerik paketi editoryal taslaktır. Üretici ve standart belgeleri terim bazında eşleştirilmeden yayınlanmış teknik kaynak olarak değerlendirilmemelidir.</p>
-          <p>Son gözden geçirilme: {new Intl.DateTimeFormat("tr-TR").format(term.reviewedAt)}</p>
-          {term.sources.map(({ source }) => <Link href={source.url} key={source.id}>{source.publisher} · {source.title}</Link>)}
-        </footer>
-      </div>
+        <ArticleSection id="degerlendirme" title="Editoryal değerlendirme">
+          <p className="article-note">Bu puanlar mutlak teknik ölçüm değil, ortalama kullanım için açıklamalı değerlendirmedir.</p>
+          <dl className="article-impact-list">
+            <ImpactScale label="Fiyata etkisi" value={term.priceImpact} />
+            <ImpactScale label="Kullanıcı faydası" value={term.userBenefit} />
+            <ImpactScale label="Ortalama kullanıcı için önem" value={term.importanceForAverageUsers} />
+          </dl>
+        </ArticleSection>
+
+        <ArticleSection id="kaynaklar" title="Kaynaklar">
+          <p className="article-note">Bu ilk içerik paketi editoryal taslaktır. Üretici ve standart belgeleri terim bazında eşleştirilmeden yayımlanmış teknik kaynak olarak değerlendirilmemelidir.</p>
+          <p>Son gözden geçirilme: {reviewedAt}</p>
+          <div className="article-sources">{term.sources.map(({ source }) => <Link href={source.url} key={source.id}>{source.publisher} · {source.title}</Link>)}</div>
+        </ArticleSection>
+      </ReadingLayout>
     </article>
   );
 }

@@ -24,9 +24,9 @@ export default async function HomePage({ params }) {
             <button type="submit">Açıkla <ArrowRight size={17} /></button>
           </form>
           <div className="hero-proof" aria-label="Platform içeriği">
-            <span><strong>60</strong> teknik terim</span>
-            <span><strong>12</strong> sade rehber</span>
-            <span><strong>4</strong> ürün dünyası</span>
+            <span><strong>465</strong> teknik terim</span>
+            <span><strong>48</strong> sade rehber</span>
+            <span><strong>9</strong> ürün dünyası</span>
           </div>
         </div>
         <div className="home-hero__visual reveal reveal--delay">
