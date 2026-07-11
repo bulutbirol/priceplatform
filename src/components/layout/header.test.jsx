@@ -42,4 +42,12 @@ describe("Header theme controls", () => {
     expect(localStorage.getItem("theme")).toBe("dark");
     expect(document.documentElement).toHaveAttribute("data-theme", "dark");
   });
+
+  it("uses English labels on English routes", () => {
+    render(<Header locale="en" />);
+
+    expect(screen.getByRole("button", { name: "Light theme" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Search" })).toBeInTheDocument();
+    expect(screen.getByText("Content beta")).toBeInTheDocument();
+  });
 });

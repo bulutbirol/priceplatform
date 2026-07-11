@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { ArticleInfobox, ArticleSection, ProsCons, ReadingLayout } from "@/components/reading/article-layout";
 import { TermDiagram } from "@/components/visuals/term-diagram";
 import { getTermBySlug } from "@/lib/content-queries";
+import { getUiCopy } from "@/lib/ui-copy";
 
 function ImpactScale({ label, value }) {
   return <div><dt>{label}</dt><dd>{value}/5</dd></div>;
@@ -14,33 +15,35 @@ export default async function TermPage({ params }) {
   const term = await getTermBySlug(slug, locale);
   if (!term) notFound();
 
+  const ui = getUiCopy(locale);
+  const copy = ui.term;
   const category = term.categories[0]?.category;
-  const reviewedAt = new Intl.DateTimeFormat("tr-TR").format(term.reviewedAt);
+  const reviewedAt = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "tr-TR").format(term.reviewedAt);
   const toc = [
-    { id: "kisa-ozet", label: "Kısaca" },
-    { id: "nasil-calisir", label: "Nasıl çalışır?" },
-    { id: "fiyat-etkisi", label: "Fiyatı neden etkiler?" },
-    { id: "artilar-eksiler", label: "Artıları ve eksileri" },
-    { id: "kim-onemsemeli", label: "Kim önemsemeli?" },
-    { id: "degerlendirme", label: "Editoryal değerlendirme" },
-    { id: "kaynaklar", label: "Kaynaklar" },
+    { id: "kisa-ozet", label: copy.brief },
+    { id: "nasil-calisir", label: copy.works },
+    { id: "fiyat-etkisi", label: copy.price },
+    { id: "artilar-eksiler", label: copy.tradeoffs },
+    { id: "kim-onemsemeli", label: copy.audience },
+    { id: "degerlendirme", label: copy.assessment },
+    { id: "kaynaklar", label: copy.sources },
   ];
 
   const infobox = (
-    <ArticleInfobox items={[
-      { label: "Terim", value: term.title },
-      { label: "Kategori", value: category?.title },
-      { label: "Fiyata etkisi", value: `${term.priceImpact}/5` },
-      { label: "Kullanıcı faydası", value: `${term.userBenefit}/5` },
-      { label: "Son inceleme", value: reviewedAt },
+    <ArticleInfobox title={ui.article.shortInfo} items={[
+      { label: copy.term, value: term.title },
+      { label: copy.category, value: category?.title },
+      { label: copy.impact, value: `${term.priceImpact}/5` },
+      { label: copy.benefit, value: `${term.userBenefit}/5` },
+      { label: copy.lastReview, value: reviewedAt },
     ]} />
   );
 
   return (
     <article className="term-page encyclopedia-page">
       <header className="article-header shell">
-        <Link href={`/${locale}/categories/${category?.slug || "telefonlar"}`} className="back-link"><ArrowLeft size={15} /> Kategoriye dön</Link>
-        <p className="article-kicker">Teknoloji sözlüğü</p>
+        <Link href={`/${locale}/categories/${category?.slug || "telefonlar"}`} className="back-link"><ArrowLeft size={15} /> {copy.back}</Link>
+        <p className="article-kicker">{copy.kicker}</p>
         <h1>{term.title}</h1>
         <p className="article-lead">{term.summary}</p>
         <div className="article-categories">
@@ -48,43 +51,43 @@ export default async function TermPage({ params }) {
         </div>
       </header>
 
-      <ReadingLayout title={term.title} toc={toc} infobox={infobox}>
-        <ArticleSection id="kisa-ozet" title="Kısaca">
-          <p className="article-analogy"><strong>Basit benzetme:</strong> {term.analogy}</p>
-          <TermDiagram term={term} />
+      <ReadingLayout title={term.title} toc={toc} infobox={infobox} labels={ui.article}>
+        <ArticleSection id="kisa-ozet" title={copy.brief}>
+          <p className="article-analogy"><strong>{copy.analogy}</strong> {term.analogy}</p>
+          <TermDiagram term={term} locale={locale} />
         </ArticleSection>
 
-        <ArticleSection id="nasil-calisir" title="Nasıl çalışır?">
+        <ArticleSection id="nasil-calisir" title={copy.works}>
           <p>{term.howItWorks}</p>
         </ArticleSection>
 
-        <ArticleSection id="fiyat-etkisi" title="Fiyatı neden etkiler?">
+        <ArticleSection id="fiyat-etkisi" title={copy.price}>
           <p>{term.whyPriceMatters}</p>
         </ArticleSection>
 
-        <ArticleSection id="artilar-eksiler" title="Artıları ve eksileri">
-          <ProsCons advantages={term.advantages} disadvantages={term.disadvantages} />
+        <ArticleSection id="artilar-eksiler" title={copy.tradeoffs}>
+          <ProsCons advantages={term.advantages} disadvantages={term.disadvantages} labels={ui.article} />
         </ArticleSection>
 
-        <ArticleSection id="kim-onemsemeli" title="Kim önemsemeli?">
-          <h3>Önem vermesi gerekenler</h3>
+        <ArticleSection id="kim-onemsemeli" title={copy.audience}>
+          <h3>{copy.shouldCare}</h3>
           <p>{term.whoShouldCare}</p>
-          <h3>Kim ekstra para vermemeli?</h3>
+          <h3>{copy.canSkip}</h3>
           <p>{term.whoCanSkip}</p>
         </ArticleSection>
 
-        <ArticleSection id="degerlendirme" title="Editoryal değerlendirme">
-          <p className="article-note">Bu puanlar mutlak teknik ölçüm değil, ortalama kullanım için açıklamalı değerlendirmedir.</p>
+        <ArticleSection id="degerlendirme" title={copy.assessment}>
+          <p className="article-note">{copy.assessmentNote}</p>
           <dl className="article-impact-list">
-            <ImpactScale label="Fiyata etkisi" value={term.priceImpact} />
-            <ImpactScale label="Kullanıcı faydası" value={term.userBenefit} />
-            <ImpactScale label="Ortalama kullanıcı için önem" value={term.importanceForAverageUsers} />
+            <ImpactScale label={copy.impact} value={term.priceImpact} />
+            <ImpactScale label={copy.benefit} value={term.userBenefit} />
+            <ImpactScale label={copy.importance} value={term.importanceForAverageUsers} />
           </dl>
         </ArticleSection>
 
-        <ArticleSection id="kaynaklar" title="Kaynaklar">
-          <p className="article-note">Bu ilk içerik paketi editoryal taslaktır. Üretici ve standart belgeleri terim bazında eşleştirilmeden yayımlanmış teknik kaynak olarak değerlendirilmemelidir.</p>
-          <p>Son gözden geçirilme: {reviewedAt}</p>
+        <ArticleSection id="kaynaklar" title={copy.sources}>
+          <p className="article-note">{copy.sourceNote}</p>
+          <p>{copy.reviewed}: {reviewedAt}</p>
           <div className="article-sources">{term.sources.map(({ source }) => <Link href={source.url} key={source.id}>{source.publisher} · {source.title}</Link>)}</div>
         </ArticleSection>
       </ReadingLayout>

@@ -178,7 +178,7 @@ const categoryAudience = {
 
 export const terms = Object.entries(termGroups).flatMap(([categorySlug, specs], categoryIndex) =>
   specs.map(([slug, title, summary, analogy, advantage, disadvantage], index) => ({
-    id: `term-${categoryIndex + 1}-${index + 1}`,
+    id: `term-${slug}`,
     slug,
     locale: "tr",
     contentType: "term",
@@ -234,9 +234,9 @@ const guideSpecs = Object.fromEntries(
     .map((slug) => [slug, [...(baseGuideSpecs[slug] || []), ...(expansionGuideSpecs[slug] || []), ...(scaleGuideSpecs[slug] || []), ...(wholeHomeGuideSpecs[slug] || [])]]),
 );
 
-export const guides = Object.entries(guideSpecs).flatMap(([categorySlug, specs], categoryIndex) =>
-  specs.map(([slug, title, shortDescription], index) => ({
-    id: `guide-${categoryIndex + 1}-${index + 1}`,
+export const guides = Object.entries(guideSpecs).flatMap(([categorySlug, specs]) =>
+  specs.map(([slug, title, shortDescription]) => ({
+    id: `guide-${slug}`,
     slug,
     locale: "tr",
     contentType: "guide",
@@ -272,8 +272,8 @@ const basePricingFactors = [
   ["lojistik", "Lojistik ve stok", "Taşıma, depolama, sigorta ve stok riski özellikle büyük ürünlerde fiyatı etkiler.", "orta"],
   ["servis-agi", "Servis ve garanti", "Yedek parça, teknisyen ağı ve uzun garanti maliyeti satın alma fiyatına dahil olabilir.", "orta"],
   ["urun-yasam-dongusu", "Ürün yaşam döngüsü", "Yeni çıkan ürünler erken kullanıcı primi taşırken dönem sonunda kampanyalar görülebilir.", "orta"],
-].map(([slug, title, shortDescription, impact], index) => ({
-  id: `factor-${index + 1}`,
+].map(([slug, title, shortDescription, impact]) => ({
+  id: `factor-${slug}`,
   slug,
   locale: "tr",
   contentType: "pricing-factor",
@@ -290,8 +290,8 @@ const basePricingFactors = [
 
 export const pricingFactors = [
   ...basePricingFactors,
-  ...expansionFactorSpecs.map((factor, index) => ({
-    id: `factor-expansion-${index + 1}`,
+  ...expansionFactorSpecs.map((factor) => ({
+    id: `factor-${factor.slug}`,
     ...factor,
     locale: "tr",
     contentType: "pricing-factor",
@@ -301,8 +301,8 @@ export const pricingFactors = [
     updatedAt: expansionReviewedAt,
     reviewedAt: expansionReviewedAt,
   })),
-  ...scaleFactorSpecs.map((factor, index) => ({
-    id: `factor-scale-${index + 1}`,
+  ...scaleFactorSpecs.map((factor) => ({
+    id: `factor-${factor.slug}`,
     ...factor,
     locale: "tr",
     contentType: "pricing-factor",
@@ -312,8 +312,8 @@ export const pricingFactors = [
     updatedAt: scaleReviewedAt,
     reviewedAt: scaleReviewedAt,
   })),
-  ...wholeHomeFactorSpecs.map((factor, index) => ({
-    id: `factor-home-${index + 1}`,
+  ...wholeHomeFactorSpecs.map((factor) => ({
+    id: `factor-${factor.slug}`,
     ...factor,
     locale: "tr",
     contentType: "pricing-factor",

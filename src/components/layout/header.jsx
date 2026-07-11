@@ -5,12 +5,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Globe2, Menu, Monitor, Moon, Search, Sun, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { getUiCopy } from "@/lib/ui-copy";
 
-const themeOptions = [
-  { value: "light", label: "Açık tema", Icon: Sun },
-  { value: "dark", label: "Koyu tema", Icon: Moon },
-  { value: "system", label: "Sistem teması", Icon: Monitor },
-];
+const themeIcons = { light: Sun, dark: Moon, system: Monitor };
 
 function resolvedTheme(theme) {
   if (theme !== "system") return theme;
@@ -24,7 +21,7 @@ function applyTheme(theme) {
   document.documentElement.style.colorScheme = resolved;
 }
 
-function ThemeSwitcher() {
+function ThemeSwitcher({ copy }) {
   const [theme, setTheme] = useState(() => {
     if (typeof window === "undefined") return "system";
     return window.localStorage.getItem("theme") || "system";
@@ -47,25 +44,29 @@ function ThemeSwitcher() {
   };
 
   return (
-    <div className="theme-switcher" role="group" aria-label="Tema seçimi">
-      {themeOptions.map(({ value, label, Icon }) => (
+    <div className="theme-switcher" role="group" aria-label={copy.theme}>
+      {["light", "dark", "system"].map((value) => {
+        const Icon = themeIcons[value];
+        return (
         <button
           key={value}
           type="button"
-          aria-label={label}
+          aria-label={copy[value]}
           aria-pressed={theme === value}
           className="theme-switcher__button"
           onClick={() => selectTheme(value)}
         >
           <Icon aria-hidden="true" size={15} strokeWidth={1.8} />
         </button>
-      ))}
+        );
+      })}
     </div>
   );
 }
 
 export function Header({ locale }) {
   const t = useTranslations("navigation");
+  const copy = getUiCopy(locale).header;
   const currentLocale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -86,27 +87,27 @@ export function Header({ locale }) {
   return (
     <header className="site-header">
       <div className="shell site-header__inner">
-        <Link href={`/${locale}`} className="wordmark" aria-label="Fiyatın Anatomisi ana sayfa">
+        <Link href={`/${locale}`} className="wordmark" aria-label={copy.home}>
           <span className="wordmark__mark" aria-hidden="true">₺</span>
           <span>
             <strong>Fiyatın</strong>
             <small>Anatomisi</small>
           </span>
         </Link>
-        <span className="beta-badge" title="Teknik kaynak eşleştirmesi devam ediyor">İçerik beta</span>
+        <span className="beta-badge" title={copy.betaTitle}>{copy.beta}</span>
 
-        <nav className="desktop-nav" aria-label="Ana navigasyon">
+        <nav className="desktop-nav" aria-label={copy.navigation}>
           {navItems.map(([key, href]) => (
             <Link key={key} href={href}>{t(key)}</Link>
           ))}
         </nav>
 
         <div className="site-header__actions">
-          <Link href={`/${locale}/search`} className="icon-button" aria-label="Ara">
+          <Link href={`/${locale}/search`} className="icon-button" aria-label={copy.search}>
             <Search aria-hidden="true" size={18} />
           </Link>
-          <ThemeSwitcher />
-          <label className="locale-select" aria-label="Dil seçimi">
+          <ThemeSwitcher copy={copy} />
+          <label className="locale-select" aria-label={copy.language}>
             <Globe2 aria-hidden="true" size={16} />
             <select value={currentLocale} onChange={(event) => handleLocaleChange(event.target.value)}>
               <option value="tr">TR</option>
@@ -117,7 +118,7 @@ export function Header({ locale }) {
             type="button"
             className="icon-button mobile-menu-button"
             onClick={() => setMobileOpen((open) => !open)}
-            aria-label={mobileOpen ? "Menüyü kapat" : "Menüyü aç"}
+            aria-label={mobileOpen ? copy.closeMenu : copy.openMenu}
             aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X aria-hidden="true" size={19} /> : <Menu aria-hidden="true" size={19} />}
@@ -126,7 +127,7 @@ export function Header({ locale }) {
       </div>
 
       {mobileOpen && (
-        <nav className="mobile-nav" aria-label="Mobil navigasyon">
+        <nav className="mobile-nav" aria-label={copy.mobileNavigation}>
           {navItems.map(([key, href], index) => (
             <Link key={key} href={href} onClick={() => setMobileOpen(false)}>
               <span>0{index + 1}</span>{t(key)}

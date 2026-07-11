@@ -4,12 +4,15 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CategoryIllustration } from "@/components/visuals/category-illustration";
 import { getCategoryGroupBySlug } from "@/lib/content-queries";
 import { localizeGroups } from "@/lib/locale-copy";
+import { categoryTree } from "@/lib/category-tree";
 
 export default async function CategoryGroupPage({ params }) {
   const { locale, slug } = await params;
   const sourceGroup = await getCategoryGroupBySlug(slug, locale);
   if (!sourceGroup) notFound();
   const group = localizeGroups([sourceGroup], locale)[0];
+  const treeGroup = categoryTree.find((item) => item.slug === slug);
+  const categoryBySlug = new Map(group.categories.map((category) => [category.slug, category]));
   const english = locale === "en";
 
   return <div className="group-page shell section-space">
@@ -20,12 +23,16 @@ export default async function CategoryGroupPage({ params }) {
       <p>{group.description}</p>
       {english && <aside className="translation-notice">Product names and technical articles in this section are still being translated and currently use the reviewed Turkish catalog.</aside>}
     </header>
-    <div className="group-product-list">
-      {group.categories.map((category) => <Link href={`/${locale}/categories/${category.slug}`} key={category.slug}>
-        <CategoryIllustration slug={category.slug} title={category.title} />
-        <div><h2>{category.title}</h2><p>{category.shortDescription}</p><small>{category._count.terms} {english ? "terms" : "terim"} · {category._count.guides} {english ? "guides" : "rehber"}</small></div>
-        <ArrowRight aria-hidden="true" />
-      </Link>)}
-    </div>
+    <div className="group-family-list">{treeGroup.families.map((family, index) => <section key={family.slug}>
+      <header><span>{String(index + 1).padStart(2, "0")}</span><div><p>{group.title}</p><h2>{family.title}</h2></div></header>
+      <div className="group-product-list">{family.products.map(({ slug: productSlug }) => {
+        const category = categoryBySlug.get(productSlug);
+        return <Link href={`/${locale}/categories/${category.slug}`} key={category.slug}>
+          <CategoryIllustration slug={category.slug} title={category.title} />
+          <div><h3>{category.title}</h3><p>{category.shortDescription}</p><small>{category._count.terms} {english ? "terms" : "terim"} · {category._count.guides} {english ? "guides" : "rehber"}</small></div>
+          <ArrowRight aria-hidden="true" />
+        </Link>;
+      })}</div>
+    </section>)}</div>
   </div>;
 }

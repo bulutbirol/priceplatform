@@ -1,57 +1,84 @@
 # Fiyatın Anatomisi
 
-Teknolojik ürünlerin fiyatını oluşturan teknoloji, üretim, marka, pazarlama, vergi ve servis etkilerini sade Türkçe ile açıklayan bağımsız eğitim platformu.
+Fiyatın Anatomisi, evde kullandığımız teknolojik ürünlerin neden farklı fiyatlara satıldığını sade bir dille anlatan bir içerik projesi. Telefonun işlemcisinden buzdolabının kompresörüne, monitör panelinden saç kurutma makinesinin rezistansına kadar ürünü oluşturan parçaları; bunların faydalarını, sınırlarını ve fiyata etkilerini açıklar.
 
-## Teknoloji
+Karşılaştırma araçları projenin ana amacı değil. Öncelik, kullanıcının etiketteki rakamın arkasında ne olduğunu anlayabilmesi ve ihtiyacı olmayan bir özelliğe fazladan para vermemesidir.
 
-- Next.js 16 App Router ve React 19
-- JavaScript / JSX
-- Tailwind CSS 4 ve semantik CSS değişkenleri
-- Prisma 5 + SQLite (yerel geliştirme)
-- next-intl dil yönlendirmesi
-- Vitest, Testing Library ve Playwright
+![Kategori ağacı](docs/screenshots/category-tree.png)
 
-## Başlangıç
+## Projede neler var?
 
-Node.js 22 LTS önerilir; mevcut Prisma 5 sürümü için Node 24 production hedefi değildir.
+- 9 ana ürün grubu ve 88 ayrıntılı ürün kategorisi
+- Telefon, kamera, bilgisayar, donanım, aksesuar, monitör, beyaz eşya, küçük ev aletleri, kişisel bakım, akıllı ev ve daha fazlası
+- 1.400'den fazla teknik terim
+- Her terim için basit açıklama, fiyat etkisi, artılar, eksiler ve kullanıcıya uygunluk notu
+- Marka primi, reklam, PR, dağıtım, vergi, kur, servis ve garanti gibi ürün dışı fiyat etkenleri
+- Üç seviyeli kategori gezgini: ana kategori, ürün ailesi ve ürün
+- Açık, koyu ve sistem teması
+- Türkçe içerik ile Türkçe ve İngilizce arayüz
+
+İngilizce arayüz hazırdır. Veritabanındaki editoryal makaleler şu an Türkçe kaynak metne geri döner; bu içerikler doğrulanmış İngilizce karşılıkları hazırlandıkça ayrı dil kayıtları olarak yayımlanmalıdır.
+
+## Yerel kurulum
+
+Node.js 20 veya 22 kullanın. Ardından:
 
 ```bash
 npm install
-# .env dosyasına DATABASE_URL="file:./dev.db" ekleyin
+```
+
+`.env.example` dosyasını `.env` olarak kopyalayın ve yerel SQLite adresini tanımlayın:
+
+```env
+DATABASE_URL="file:./dev.db"
+```
+
+Veritabanını hazırlayıp projeyi başlatın:
+
+```bash
 npx prisma migrate deploy
 npm run db:seed
 npm run dev
 ```
 
-Varsayılan yerel adres `http://localhost:3000/tr` olur.
+Uygulama varsayılan olarak `http://localhost:3000/tr` adresinde açılır. İngilizce arayüz için `/en` yolunu kullanabilirsiniz.
 
-## Komutlar
+## Geliştirme komutları
 
 ```bash
-npm test          # Birim ve bileşen testleri
-npm run lint      # ESLint
-npm run build     # Production build
-npm run db:seed   # Türkçe başlangıç içeriği
-npx playwright test
+npm test          # Vitest birim ve bileşen testleri
+npm run lint      # ESLint kontrolü
+npm run build     # Production derlemesi
+npm run test:e2e  # Derleme ve Playwright tarayıcı testleri
+npm run db:seed   # Başlangıç içeriğini yeniden oluşturur
 ```
 
-Playwright testleri mevcut production build'i 3100 portunda çalıştırır. İlk kullanımda Chromium kurulumu gerekebilir:
+Playwright ilk kez kullanılacaksa Chromium kurulmalıdır:
 
 ```bash
 npx playwright install chromium
 ```
 
-## İçerik modeli
+## Kullanılan yapı
 
-Başlangıç verisi dört kategori, 60 teknik terim, 12 rehber, 10 fiyat faktörü, marka profilleri ve örnek karşılaştırmalar içerir. Terimler kategori ilişkileri, artılar, eksiler, kullanıcı yönlendirmesi, editoryal etki puanları ve kaynaklarla tutulur.
+Proje JavaScript ve JSX ile yazılmıştır. Arayüz Next.js 16 App Router, React 19 ve Tailwind CSS 4 üzerinde çalışır. İçerik modeli Prisma 5 ile yönetilir; yerel geliştirmede SQLite kullanılır. Rotalar ve arayüz metinleri `next-intl`, testler Vitest, Testing Library ve Playwright ile hazırlanmıştır.
 
-Marka primi ve PR/pazarlama değerlendirmeleri kesin maliyet yüzdesi değildir; açıklamalı editoryal değerlendirmelerdir.
+Temel dizinler:
 
-## Tema
+```text
+src/app/             Sayfalar ve rota düzeni
+src/components/      Arayüz, katalog ve görsel anlatım bileşenleri
+src/lib/             İçerik sorguları, kategori ağacı ve çeviri metinleri
+prisma/              Şema, migration dosyaları ve başlangıç verisi
+i18n/                next-intl mesajları
+tests/               Uçtan uca testler
+docs/                Tasarım notları ve proje ekran görüntüleri
+```
 
-Açık, koyu ve sistem temaları desteklenir. Tercih ilk çizimden önce uygulanır ve `localStorage` içinde saklanır; böylece sayfa açılışında renk sıçraması oluşmaz.
+## Editoryal not
 
-## Yayın notları
+Fiyat etki puanları kesin maliyet yüzdesi değildir. Marka primi ve pazarlama gibi ölçülmesi zor başlıklar, kullanıcıya fiyatın katmanlarını göstermek için hazırlanmış editoryal değerlendirmelerdir.
 
-- İlk 60 terim editoryal beta içeriğidir; üretici ve standart kaynaklarının terim bazında eşleştirilmesi yayın öncesi editoryal adımdır.
-- Feedback hız sınırı tek Node instance + SQLite kurulumu için bellek içi korumadır. Çok instance veya serverless dağıtımda Redis benzeri paylaşımlı bir rate-limit deposu kullanılmalıdır.
+Başlangıç verisindeki içerikler editoryal beta durumundadır. Teknik iddialar yayıma hazır kabul edilmeden önce üretici belgeleri, standart dokümanları veya güvenilir birincil kaynaklarla terim bazında eşleştirilmelidir. Özellikle güvenlik, enerji tüketimi ve dayanıklılık bilgileri ürün türüne göre ayrıca kontrol edilmelidir.
+
+Yerel `.env` dosyaları Git tarafından izlenmez. Gerçek anahtarlar, bağlantı bilgileri veya kişisel veriler kaynak koda eklenmemelidir.

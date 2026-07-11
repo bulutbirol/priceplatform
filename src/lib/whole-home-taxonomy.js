@@ -10,7 +10,7 @@ function parseProducts(value) {
 }
 
 export const categoryGroups = [
-  ["personal-tech", "kisisel-teknoloji", "Kişisel Teknoloji", "Telefonlardan oyun konsollarına kişisel elektronik ürünler.", "telefonlar:Telefon|tabletler:Tablet|dizustu-bilgisayarlar:Dizüstü Bilgisayar|masaustu-bilgisayarlar:Masaüstü Bilgisayar|monitorler:Monitör|kameralar:Kamera|kulakliklar:Kulaklık|akilli-saatler:Akıllı Saat|oyun-konsollari:Oyun Konsolu"],
+  ["personal-tech", "kisisel-teknoloji", "Kişisel Teknoloji", "Telefonlardan bilgisayar donanımına kişisel elektronik ürünler.", "telefonlar:Telefon|tabletler:Tablet|akilli-saatler:Akıllı Saat|dizustu-bilgisayarlar:Dizüstü Bilgisayar|masaustu-bilgisayarlar:Masaüstü Bilgisayar|mini-pcler:Mini PC|hepsi-bir-arada-bilgisayarlar:Hepsi Bir Arada Bilgisayar|islemciler:İşlemci|ekran-kartlari:Ekran Kartı|anakartlar:Anakart|ram-bellekler:RAM Bellek|ssdler:SSD|guc-kaynaklari:Güç Kaynağı|bilgisayar-kasalari:Bilgisayar Kasası|islemci-sogutuculari:İşlemci Soğutucusu|monitorler:Monitör|klavyeler:Klavye|fareler:Fare|web-kameralari:Web Kamera|yazicilar:Yazıcı|harici-depolama:Harici Depolama|dock-istasyonlari:Dock İstasyonu|kameralar:Kamera|kulakliklar:Kulaklık|oyun-konsollari:Oyun Konsolu"],
   ["entertainment", "goruntu-eglence", "Görüntü ve Eğlence", "Evde görüntü, ses ve medya deneyimi sunan ürünler.", "televizyonlar:Televizyon|projeksiyonlar:Projeksiyon|soundbarlar:Soundbar|hoparlorler:Hoparlör|medya-oynaticilar:Medya Oynatıcı"],
   ["major-appliances", "buyuk-ev-aletleri", "Büyük Ev Aletleri", "Uzun ömürlü mutfak, çamaşır ve iklimlendirme cihazları.", "buzdolaplari:Buzdolabı|dondurucular:Dondurucu|camasir-makineleri:Çamaşır Makinesi|kurutma-makineleri:Kurutma Makinesi|bulasik-makineleri:Bulaşık Makinesi|firinlar:Fırın|ocaklar:Ocak|davlumbazlar:Davlumbaz|klimalar:Klima"],
   ["small-kitchen", "kucuk-mutfak-aletleri", "Küçük Mutfak Aletleri", "Hazırlama, pişirme ve içecek cihazları.", "airfryerlar:Airfryer|mikrodalgalar:Mikrodalga|kahve-makineleri:Kahve Makinesi|kettlelar:Kettle|tost-makineleri:Tost Makinesi|blenderlar:Blender|mikserler:Mikser|mutfak-robotlari:Mutfak Robotu|ekmek-yapma-makineleri:Ekmek Yapma Makinesi|su-aritma-cihazlari:Su Arıtma Cihazı"],
@@ -28,7 +28,7 @@ export const productCategoryGroupBySlug = Object.fromEntries(categoryGroups.flat
 export const wholeHomeCategories = categoryGroups.flatMap((group) => group.products
   .filter((product) => !establishedSlugs.has(product.slug))
   .map((product, index) => ({
-    id: `category-home-${group.position + 1}-${index + 1}`,
+    id: `category-home-${product.slug}`,
     slug: product.slug,
     locale: "tr",
     title: product.title,

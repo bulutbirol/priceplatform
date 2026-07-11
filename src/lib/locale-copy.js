@@ -1,5 +1,5 @@
 const englishGroups = {
-  "kisisel-teknoloji": ["Personal Technology", "Personal electronics, from phones to game consoles."],
+  "kisisel-teknoloji": ["Personal Technology", "Personal electronics, from phones and computers to hardware and peripherals."],
   "goruntu-eglence": ["Entertainment and Display", "Products for home video, audio, and media experiences."],
   "buyuk-ev-aletleri": ["Major Appliances", "Long-life kitchen, laundry, and climate appliances."],
   "kucuk-mutfak-aletleri": ["Small Kitchen Appliances", "Food preparation, cooking, and beverage appliances."],

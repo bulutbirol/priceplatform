@@ -11,18 +11,21 @@ function ApplianceDiagram() {
   return <g><rect x="145" y="36" width="210" height="252" rx="15" /><circle cx="250" cy="174" r="78" className="diagram-fill" /><circle cx="250" cy="174" r="48" /><path d="M220 174c12-28 28-28 40 0s28 28 40 0" className="diagram-accent" /><circle cx="185" cy="68" r="7" /><path d="M205 68h58" /></g>;
 }
 
-export function TermDiagram({ term }) {
+import { getUiCopy } from "@/lib/ui-copy";
+
+export function TermDiagram({ term, locale = "tr" }) {
+  const copy = getUiCopy(locale).visuals;
   const category = term.categories?.[0]?.category?.slug || term.categorySlugs?.[0] || "telefonlar";
   const Diagram = category === "kameralar" ? CameraDiagram : category === "televizyonlar" ? TvDiagram : category === "beyaz-esya" ? ApplianceDiagram : PhoneDiagram;
   return (
-    <div className="term-diagram" role="img" aria-label={`${term.title} teknolojisini anlatan basit diyagram`}>
+    <div className="term-diagram" role="img" aria-label={`${term.title} ${copy.diagram}`}>
       <svg viewBox="0 0 500 330" aria-hidden="true">
         <path d="M35 165h55m320 0h55" className="diagram-flow" />
         <circle cx="35" cy="165" r="8" className="diagram-accent-fill" />
         <circle cx="465" cy="165" r="8" className="diagram-accent-fill" />
         <Diagram />
       </svg>
-      <div className="term-diagram__legend"><span>Teknoloji girdisi</span><strong>{term.title}</strong><span>Kullanıcı etkisi</span></div>
+      <div className="term-diagram__legend"><span>{copy.input}</span><strong>{term.title}</strong><span>{copy.userEffect}</span></div>
     </div>
   );
 }

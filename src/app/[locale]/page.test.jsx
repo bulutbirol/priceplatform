@@ -8,11 +8,11 @@ describe("HomePage", () => {
     render(page);
 
     expect(screen.getByRole("heading", { name: "Hangi ürünün fiyatını anlamak istiyorsun?" })).toBeInTheDocument();
-    expect(screen.getByLabelText("Platform içeriği")).toHaveTextContent("72 ürün türü");
-    expect(screen.getByLabelText("Platform içeriği")).toHaveTextContent("1700+ teknik terim");
+    expect(screen.getByLabelText("Platform içeriği")).toHaveTextContent("88 ürün türü");
+    expect(screen.getByLabelText("Platform içeriği")).toHaveTextContent("1400+ teknik terim");
   });
 
-  it("shows all nine upper product groups", async () => {
+  it("shows all nine upper product groups in a deep category browser", async () => {
     const page = await HomePage({ params: Promise.resolve({ locale: "tr" }) });
     render(page);
 
@@ -27,8 +27,10 @@ describe("HomePage", () => {
       "Kişisel Bakım",
       "Ev, Atölye ve Bahçe",
     ]) {
-      expect(screen.getByRole("heading", { name: group })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: new RegExp(group) })).toBeInTheDocument();
     }
+    expect(screen.getByRole("button", { name: /Mobil ve Giyilebilir/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Telefon/ })).toHaveAttribute("href", "/tr/categories/telefonlar");
   });
 
   it("keeps the catalog search-first and opens product groups progressively", async () => {
@@ -37,7 +39,7 @@ describe("HomePage", () => {
 
     expect(screen.getByRole("textbox", { name: "Teknoloji ara" })).toBeInTheDocument();
     expect(screen.queryByRole("img", { name: "Bir ürün fiyatını oluşturan katmanlar" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Kişisel Teknoloji/ })).toHaveAttribute("href", "/tr/groups/kisisel-teknoloji");
+    expect(screen.getByLabelText("Kategori gezgini")).toBeInTheDocument();
   });
 
   it("renders the English catalog entry page", async () => {
@@ -45,7 +47,7 @@ describe("HomePage", () => {
     render(page);
 
     expect(screen.getByRole("heading", { name: "Which product price do you want to understand?" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Personal Technology" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Personal Technology/ })).toBeInTheDocument();
     expect(screen.getByText(/Technical articles are being translated/i)).toBeInTheDocument();
   });
 });

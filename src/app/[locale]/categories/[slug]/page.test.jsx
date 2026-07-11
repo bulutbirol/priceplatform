@@ -10,7 +10,7 @@ describe("CategoryPage", () => {
     render(page);
 
     expect(screen.getByRole("heading", { name: "Kamera" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Sensör boyutu" })).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { name: "Sensör boyutu" }).length).toBeGreaterThan(0);
     expect(screen.queryByRole("heading", { name: "OLED ekran" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "İlk kamera nasıl seçilir?" })).toBeInTheDocument();
   });
@@ -30,5 +30,6 @@ describe("CategoryPage", () => {
 
     expect(screen.queryByText("0 terim")).not.toBeInTheDocument();
     expect(screen.getAllByText(/terim$/).length).toBeGreaterThan(0);
+    expect(screen.getByRole("img", { name: "Robot Süpürge sistem haritası" })).toBeInTheDocument();
   });
 });

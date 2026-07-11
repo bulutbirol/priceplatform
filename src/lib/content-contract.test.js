@@ -26,6 +26,10 @@ describe("Turkish content catalog", () => {
       "gunes-panelleri",
       "sac-kurutma-makineleri",
       "matkaplar",
+      "islemciler",
+      "ekran-kartlari",
+      "klavyeler",
+      "fareler",
     ]));
   });
 

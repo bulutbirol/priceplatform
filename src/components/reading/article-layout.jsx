@@ -1,4 +1,6 @@
-export function TableOfContents({ items }) {
+const defaultLabels = { contents: "İçindekiler", shortInfo: "Kısa bilgiler", pros: "Artıları", cons: "Eksileri", article: "makalesi" };
+
+export function TableOfContents({ items, labels = defaultLabels }) {
   const links = items.filter((item) => item?.id && item?.label);
   if (!links.length) return null;
 
@@ -12,12 +14,12 @@ export function TableOfContents({ items }) {
 
   return (
     <>
-      <nav className="article-toc article-toc--desktop" aria-label="İçindekiler">
-        <p>İçindekiler</p>
+      <nav className="article-toc article-toc--desktop" aria-label={labels.contents}>
+        <p>{labels.contents}</p>
         {contents}
       </nav>
       <details className="article-toc article-toc--mobile">
-        <summary>İçindekiler</summary>
+        <summary>{labels.contents}</summary>
         <div>{contents}</div>
       </details>
     </>
@@ -52,26 +54,26 @@ export function ArticleSection({ id, title, children, className = "" }) {
   );
 }
 
-export function ProsCons({ advantages = [], disadvantages = [] }) {
+export function ProsCons({ advantages = [], disadvantages = [], labels = defaultLabels }) {
   return (
     <div className="article-pros-cons">
       <section aria-labelledby="advantages-heading">
-        <h3 id="advantages-heading"><span aria-hidden="true">+</span> Artıları</h3>
+        <h3 id="advantages-heading"><span aria-hidden="true">+</span> {labels.pros}</h3>
         <ul>{advantages.map((item) => <li key={item.id || item.text}>{item.text}</li>)}</ul>
       </section>
       <section aria-labelledby="disadvantages-heading">
-        <h3 id="disadvantages-heading"><span aria-hidden="true">−</span> Eksileri</h3>
+        <h3 id="disadvantages-heading"><span aria-hidden="true">−</span> {labels.cons}</h3>
         <ul>{disadvantages.map((item) => <li key={item.id || item.text}>{item.text}</li>)}</ul>
       </section>
     </div>
   );
 }
 
-export function ReadingLayout({ title, toc, infobox, children }) {
+export function ReadingLayout({ title, toc, infobox, children, labels = defaultLabels }) {
   return (
     <div className="reading-layout shell">
-      <TableOfContents items={toc} />
-      <div className="reading-article" role="region" aria-label={`${title} makalesi`}>{children}</div>
+      <TableOfContents items={toc} labels={labels} />
+      <div className="reading-article" role="region" aria-label={`${title} ${labels.article}`}>{children}</div>
       {infobox}
     </div>
   );
