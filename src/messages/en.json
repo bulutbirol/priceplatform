@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "title": "Price Explained",
+    "description": "Understand what you are really paying for in technology products."
+  },
+  "common": {
+    "siteName": "Price Explained",
+    "tagline": "Understand what you are really paying for.",
+    "searchPlaceholder": "Search a technology, feature or product category",
+    "exploreCategories": "Explore Categories",
+    "learnPricing": "Learn How Pricing Works",
+    "feedback": "Send Feedback",
+    "theme": "Theme",
+    "language": "Language"
+  },
+  "home": {
+    "heroTitle": "Understand why technology products cost more.",
+    "heroDescription": "Learn which features actually matter, which ones increase the price, and whether they are worth paying for.",
+    "popularCategories": "Popular Categories",
+    "pricingFactors": "Pricing Factors",
+    "howItWorks": "How It Works",
+    "featuredGuides": "Featured Guides",
+    "feedbackSectionTitle": "Help us keep information useful",
+    "feedbackSectionDescription": "If you notice inaccurate, outdated, missing, or unclear information, let us know.",
+    "disclaimer": "This website is an independent educational platform. Its content is compiled from publicly available sources and online research. We are not engineers, manufacturers, certified technicians or financial advisors. Information may change over time and may contain errors. Always verify important details with the manufacturer or an authorized professional before making a purchase decision."
+  },
+  "navigation": {
+    "categories": "Categories",
+    "guides": "Guides",
+    "comparisons": "Comparisons",
+    "pricingFactors": "Pricing Factors",
+    "feedback": "Feedback"
+  }
+}
