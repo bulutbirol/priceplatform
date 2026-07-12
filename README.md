@@ -36,8 +36,8 @@ npm run test:e2e
 ## Vercel'e yayınlama
 
 1. GitHub reposunu Vercel'e aktarın.
-2. Vercel Marketplace içinden Neon entegrasyonunu projeye bağlayın.
-3. Neon'un havuzlanmış bağlantısını `DATABASE_URL`, doğrudan bağlantısını `DIRECT_URL` olarak Production, Preview ve Development ortamlarına ekleyin.
+2. Vercel Marketplace içinden Prisma Postgres entegrasyonunu projeye bağlayın.
+3. Entegrasyonun `DATABASE_URL` değişkenini Production, Preview ve Development ortamlarına eklediğini kontrol edin.
 4. İsterseniz `NEXT_PUBLIC_SITE_URL` değerini Vercel'in verdiği üretim adresiyle güncelleyin.
 5. Deploy işlemini başlatın. `vercel-build` komutu migration'ı uygular ve üretim build'ini oluşturur.
 

@@ -7,7 +7,8 @@ describe("Vercel release configuration", () => {
     const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
 
     expect(schema).toMatch(/provider\s*=\s*"postgresql"/);
-    expect(schema).toContain('directUrl = env("DIRECT_URL")');
+    expect(schema).not.toContain("DIRECT_URL");
+    expect(schema).toMatch(/url\s*=\s*env\("DATABASE_URL"\)/);
     expect(packageJson.scripts.postinstall).toBe("prisma generate");
     expect(packageJson.scripts["vercel-build"]).toContain("prisma migrate deploy");
   });
