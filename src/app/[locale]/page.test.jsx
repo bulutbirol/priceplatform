@@ -48,6 +48,7 @@ describe("HomePage", () => {
 
     expect(screen.getByRole("heading", { name: "Which product price do you want to understand?" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Personal Technology/ })).toBeInTheDocument();
-    expect(screen.getByText(/Technical articles are being translated/i)).toBeInTheDocument();
+    expect(screen.getByLabelText("Platform content")).toHaveTextContent("8 price factors");
+    expect(screen.queryByText(/being translated/i)).not.toBeInTheDocument();
   });
 });

@@ -1,9 +1,4 @@
-export default async function ContactPage({ params }) {
-    const { locale } = await params;
-    return (<div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <h1 className="text-4xl font-semibold">Contact</h1>
-        <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">Use the feedback form if you want to report an issue, suggest a topic, or share a correction. This contact page is a placeholder for future direct communication.</p>
-      </div>
-    </div>);
-}
+import Link from "next/link";
+import { InfoPage } from "@/components/reading/info-page";
+import { getInfoPageCopy } from "@/lib/info-page-copy";
+export default async function ContactPage({ params }) { const { locale } = await params; const copy = getInfoPageCopy(locale).contact; return <InfoPage {...copy}><Link className="mt-8 inline-flex rounded-full bg-slate-900 px-5 py-3 font-semibold text-white dark:bg-slate-100 dark:text-slate-900" href={`/${locale}/feedback`}>{copy.link}</Link></InfoPage>; }

@@ -21,7 +21,7 @@ export const homeCopy = {
   en: {
     eyebrow: "Understand the price, simply", title: "Which product price do you want to understand?", lead: "Choose a product or search by name. We explain its parts, specifications, and price drivers step by step.",
     searchLabel: "Search technology", placeholder: "Search phones, refrigerators, processors, or compressors", search: "Search", catalog: "Product catalog",
-    stats: ["product groups", "product types", "technical terms"], translationNotice: "Technical articles are being translated. Entries not yet available in English are shown from the reviewed Turkish catalog.",
+    stats: ["product groups", "product types", "price factors"], translationNotice: null,
     deeper: "When you want to go deeper", nextTitle: "More detail appears when you need it.",
     links: [["Price factors", "Brand premium, marketing, tax, exchange rates, and service"], ["Buying guides", "Choose the right product without paying for features you do not need"], ["Comparisons", "See the practical difference between two technologies"]],
   },
@@ -31,6 +31,19 @@ export function localizeGroups(groups, locale) {
   if (locale !== "en") return groups;
   return groups.map((group) => {
     const [title, description] = englishGroups[group.slug] || [group.title, group.description];
-    return { ...group, title, description };
+    return {
+      ...group,
+      title,
+      description,
+      families: group.families?.map((family) => ({
+        ...family,
+        title: englishFamilyNames[family.slug] || family.title,
+        products: family.products.map((product) => ({
+          ...product,
+          title: englishProductNames[product.slug] || product.title,
+        })),
+      })),
+    };
   });
 }
+import { englishFamilyNames, englishProductNames } from "./english-catalog";

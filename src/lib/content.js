@@ -2,6 +2,7 @@ import { expansionCategories, expansionFactorSpecs, expansionGuideSpecs, expansi
 import { scaleFactorSpecs, scaleGuideSpecs, scaleReviewedAt, scaleTermGroups } from "./content-scale.js";
 import { calculateReadingTime } from "./reading-time.js";
 import { categoryGroups, productCategoryGroupBySlug, wholeHomeCategories, wholeHomeFactorSpecs, wholeHomeGuideSpecs, wholeHomeReviewedAt, wholeHomeTermGroups } from "./whole-home-taxonomy.js";
+export { retailFeatures } from "./retail-features.js";
 
 export { categoryGroups };
 

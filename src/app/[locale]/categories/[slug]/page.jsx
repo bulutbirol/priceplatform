@@ -3,15 +3,18 @@ import { notFound } from "next/navigation";
 import { ArrowRight, BookOpen, CircleDollarSign, Scale } from "lucide-react";
 import { CategoryIllustration } from "@/components/visuals/category-illustration";
 import { ProductExplainer } from "@/components/catalog/product-explainer";
+import { RetailFeatureOverview } from "@/components/catalog/retail-feature-overview";
 import { getAllCategories, getCategoryBySlug } from "@/lib/content-queries";
 import { groupPriceFactors } from "@/lib/content-grouping";
 import { getUiCopy } from "@/lib/ui-copy";
+import { getRetailFeatures } from "@/lib/retail-features";
 
 export default async function CategoryPage({ params }) {
   const { locale, slug } = await params;
   const category = await getCategoryBySlug(slug, locale);
   if (!category) notFound();
   const copy = getUiCopy(locale).category;
+  const retailFeatures = getRetailFeatures(slug, locale);
 
   if (slug === "beyaz-esya") {
     const applianceCategories = (await getAllCategories(locale)).filter((item) => ["buzdolaplari", "camasir-makineleri", "bulasik-makineleri", "kurutma-makineleri", "firinlar", "klimalar"].includes(item.slug));
@@ -39,13 +42,14 @@ export default async function CategoryPage({ params }) {
         <div><p className="eyebrow">{copy.world} · {category.terms.length} {copy.term}</p><h1>{category.title}</h1><p>{category.body}</p></div>
         <CategoryIllustration slug={category.slug} title={category.title} />
       </header>
-      <ProductExplainer title={category.title} terms={category.terms} locale={locale} />
+      <RetailFeatureOverview features={retailFeatures} locale={locale} />
+      {category.terms.length > 0 && <ProductExplainer title={category.title} terms={category.terms} locale={locale} />}
       <section className="category-factor-band"><div className="shell">
         <div className="category-factor-band__intro"><CircleDollarSign /><p className="kicker">{copy.priceQuestion}</p><h2>{copy.hiddenSide}</h2></div>
         <div className="compact-disclosures">{groupedFactors.map((group, index) => <details key={group.slug} open={index === 0}><summary><span>{group.title}</span><small>{group.items.length} {copy.factor}</small></summary><div className="category-factor-chips">{group.items.map((factor) => <span key={factor.slug}><strong>{factor.title}</strong><small>{factor.impact} {copy.effect}</small></span>)}</div></details>)}</div>
         <p className="editorial-note">{copy.estimate}</p>
       </div></section>
-      <section className="category-terms shell section-space">
+      {groupedTerms.length > 0 && <section className="category-terms shell section-space">
         <div className="section-heading"><div><span className="section-index">02</span><p className="kicker">{copy.glossary}</p></div><h2>{copy.learn}<br />{copy.filterMarketing}</h2></div>
         <div className="category-term-groups">{groupedTerms.map((group, groupIndex) => <details key={group.title} open={groupIndex === 0}>
           <summary><span>0{groupIndex + 1}</span><h3>{group.title}</h3><small>{group.terms.length} {copy.term}</small></summary>
@@ -54,13 +58,13 @@ export default async function CategoryPage({ params }) {
             <div className="mini-tradeoff"><small>+</small>{term.advantages[0]?.text}<small>−</small>{term.disadvantages[0]?.text}</div><ArrowRight aria-hidden="true" />
           </Link>)}</div>
         </details>)}</div>
-      </section>
-      <section className="category-guides shell section-space">
+      </section>}
+      {category.guides.length > 0 && <section className="category-guides shell section-space">
         <div className="category-guides__intro"><BookOpen /><p className="kicker">{copy.guides}</p><h2>{copy.decision}</h2><p>{copy.guideLead}</p></div>
         <div className="category-guide-cards">{category.guides.map((guide, index) => <Link href={`/${locale}/guides/${guide.slug}`} key={guide.slug}>
           <span>{copy.guide} 0{index + 1}</span><h3>{guide.title}</h3><p>{guide.shortDescription}</p><strong>{copy.start} <ArrowRight /></strong>
         </Link>)}</div>
-      </section>
+      </section>}
       <section className="category-value shell"><Scale /><div><p className="kicker">{copy.rule}</p><h2>{copy.ruleText}</h2></div></section>
     </div>
   );

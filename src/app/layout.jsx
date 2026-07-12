@@ -1,4 +1,5 @@
 import "./globals.css";
+import { getSiteUrl } from "@/lib/site-url";
 
 const themeBootScript = `
   (() => {
@@ -17,6 +18,7 @@ const themeBootScript = `
 `;
 
 export const metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "Fiyatın Anatomisi",
     template: "%s · Fiyatın Anatomisi",

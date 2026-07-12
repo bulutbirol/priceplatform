@@ -5,6 +5,7 @@ import { groupSearchResults } from "@/lib/content-grouping";
 import { getUiCopy } from "@/lib/ui-copy";
 
 function hrefFor(result, locale) {
+  if (result.contentType === "retail-feature") return `/${locale}/categories/${result.categorySlug}#magaza-ozellikleri`;
   if (result.description && Number.isInteger(result.position)) return `/${locale}/groups/${result.slug}`;
   if (result.summary) return `/${locale}/terms/${result.slug}`;
   if (result.readingTime) return `/${locale}/guides/${result.slug}`;

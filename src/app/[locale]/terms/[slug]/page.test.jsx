@@ -1,10 +1,12 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import TermPage from "./page";
+import { notFound } from "next/navigation";
 
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
 
 describe("TermPage", () => {
+  beforeEach(() => vi.mocked(notFound).mockReset());
   it("explains a term with a visual, trade-offs and audience guidance", async () => {
     const page = await TermPage({ params: Promise.resolve({ locale: "tr", slug: "oled-ekran" }) });
     render(page);
@@ -28,13 +30,8 @@ describe("TermPage", () => {
     expect(within(contents).getByRole("link", { name: "Fiyatı neden etkiler?" })).toHaveAttribute("href", "#fiyat-etkisi");
   });
 
-  it("localizes the article interface on English routes", async () => {
-    const page = await TermPage({ params: Promise.resolve({ locale: "en", slug: "oled-ekran" }) });
-    render(page);
-
-    expect(screen.getByRole("navigation", { name: "Contents" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Advantages" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "How does it work?" })).toBeInTheDocument();
-    expect(screen.getByRole("complementary", { name: "Quick facts" })).toBeInTheDocument();
+  it("does not expose untranslated Turkish terms on English routes", async () => {
+    try { await TermPage({ params: Promise.resolve({ locale: "en", slug: "oled-ekran" }) }); } catch {}
+    expect(notFound).toHaveBeenCalledOnce();
   });
 });

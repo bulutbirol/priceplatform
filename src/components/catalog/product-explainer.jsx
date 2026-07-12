@@ -15,7 +15,7 @@ export function ProductExplainer({ title, terms, locale = "tr" }) {
   return <section className="product-explainer shell section-space" aria-labelledby="product-system-title">
     <header className="product-explainer__intro">
       <div><span className="section-index">01</span><p className="kicker">{copy.seeInside}</p></div>
-      <div><h2 id="product-system-title">{title} {copy.systemQuestion}?</h2><p>{copy.systemLead}</p></div>
+      <div><h2 id="product-system-title">{title} {copy.systemQuestion}</h2><p>{copy.systemLead}</p></div>
     </header>
 
     <div className="product-system-map" role="img" aria-label={`${title} ${copy.systemMap}`}>

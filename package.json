@@ -1,6 +1,6 @@
 {
   "name": "priceplatform",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -9,14 +9,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
     "test:e2e": "npm run build && playwright test",
-    "db:seed": "prisma db seed"
-  },
-  "prisma": {
-    "seed": "node prisma/seed.js"
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

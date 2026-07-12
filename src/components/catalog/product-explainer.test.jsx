@@ -14,6 +14,7 @@ describe("ProductExplainer", () => {
     render(<ProductExplainer title="Saç Kurutma Makinesi" terms={terms} />);
 
     expect(screen.getByRole("img", { name: "Saç Kurutma Makinesi sistem haritası" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Saç Kurutma Makinesi nasıl bir sistem?" })).toBeInTheDocument();
     expect(screen.getAllByText("Fan motoru").length).toBeGreaterThan(0);
     expect(screen.getByText("Termal sigorta artısı")).toBeInTheDocument();
     expect(screen.getByText("Termal sigorta eksisi")).toBeInTheDocument();

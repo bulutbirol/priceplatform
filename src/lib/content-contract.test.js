@@ -1,7 +1,27 @@
 import { describe, expect, it } from "vitest";
 import { categories, guides, pricingFactors, terms } from "./content";
+import * as content from "./content";
+import { getRetailFeatures } from "./retail-features";
 
 describe("Turkish content catalog", () => {
+  it("defines store-facing features for the first eight product types", () => {
+    const retailFeatures = content.retailFeatures;
+    const firstCategories = ["telefonlar", "dizustu-bilgisayarlar", "monitorler", "kameralar", "televizyonlar", "buzdolaplari", "camasir-makineleri", "robot-supurgeler"];
+
+    expect(Array.isArray(retailFeatures)).toBe(true);
+    for (const categorySlug of firstCategories) {
+      expect(retailFeatures.filter((feature) => feature.categorySlug === categorySlug).length, categorySlug).toBeGreaterThanOrEqual(5);
+    }
+    for (const feature of retailFeatures) {
+      expect(["düşük", "orta", "yüksek"], `${feature.slug} priceImpact`).toContain(feature.priceImpact);
+      expect(feature.title, `${feature.slug} title`).toBeTruthy();
+      expect(feature.shortDescription, `${feature.slug} description`).toBeTruthy();
+      expect(feature.decision, `${feature.slug} decision`).toBeTruthy();
+      expect(feature.aliases.length, `${feature.slug} aliases`).toBeGreaterThan(0);
+      expect(["editorial", "primary", "independent"], `${feature.slug} sourceStatus`).toContain(feature.sourceStatus);
+    }
+  });
+
   it("contains nine primary product categories and the white-goods index", () => {
     expect(categories.map((category) => category.slug)).toEqual(expect.arrayContaining([
       "bulasik-makineleri",
@@ -130,5 +150,15 @@ describe("Turkish content catalog", () => {
       const matchingTerms = terms.filter((term) => term.title === passiveTitle);
       for (const term of matchingTerms) expect(term.howItWorks.toLocaleLowerCase("tr-TR"), term.slug).not.toContain("kontrol yazılımı");
     }
+  });
+});
+
+describe("English store features", () => {
+  it("does not reuse Turkish feature copy", () => {
+    const features = getRetailFeatures("telefonlar", "en");
+
+    expect(features.find((item) => item.slug === "islemci")?.title).toBe("Processor");
+    expect(features.every((item) => item.locale === "en")).toBe(true);
+    expect(features.every((item) => item.shortDescription && item.decision)).toBe(true);
   });
 });

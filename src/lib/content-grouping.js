@@ -11,9 +11,9 @@ function normalizedFactorText(factor) {
 
 function layerForFactor(factor) {
   const text = normalizedFactorText(factor);
-  if (/vergi|kur|ithalat|lojistik|nakliye|enerji maliyeti|gümrük/.test(text)) return "dis";
-  if (/marka|pazarlama|reklam|\bpr\b|perakende|dağıtım|dagitim|lisans|abonelik|satış/.test(text)) return "satis";
-  if (/üretim|uretim|test|dayanıklılık|dayaniklilik|garanti|servis|bakım|bakim|yedek|montaj|işçilik|iscilik|arge|ar-ge|kalite kontrol|onarılabilirlik/.test(text)) return "uretim";
+  if (/vergi|tax|exchange|kur|ithalat|import|lojistik|logistics|nakliye|enerji maliyeti|gümrük|customs/.test(text)) return "dis";
+  if (/marka|brand|marketing|pazarlama|reklam|advertising|\bpr\b|perakende|retail|dağıtım|dagitim|distribution|lisans|abonelik|satış/.test(text)) return "satis";
+  if (/üretim|uretim|manufacturing|test|dayanıklılık|dayaniklilik|warranty|garanti|service|servis|bakım|bakim|yedek|montaj|işçilik|iscilik|research|development|arge|ar-ge|kalite kontrol|onarılabilirlik/.test(text)) return "uretim";
   return "urun";
 }
 
@@ -38,6 +38,7 @@ export function groupSearchResults(results) {
   const definitions = [
     ["groups", "Ürün grupları", (item) => item.description && Number.isInteger(item.position)],
     ["categories", "Ürün türleri", (item) => item.eyebrow],
+    ["features", "Mağaza özellikleri", (item) => item.contentType === "retail-feature"],
     ["terms", "Teknik terimler", (item) => item.summary],
     ["guides", "Rehberler", (item) => item.readingTime],
     ["factors", "Fiyat faktörleri ve markalar", () => true],

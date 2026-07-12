@@ -1,10 +1,25 @@
 import { render, screen } from "@testing-library/react";
+import { within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import CategoryPage from "./page";
 
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
 
 describe("CategoryPage", () => {
+  it("shows store-facing features and a short decision before technical details", async () => {
+    const page = await CategoryPage({ params: Promise.resolve({ locale: "tr", slug: "telefonlar" }) });
+    render(page);
+
+    const overview = screen.getByRole("region", { name: "Mağazada gördüğün özellikler" });
+    expect(within(overview).getByRole("heading", { name: "Önce bunlara bak" })).toBeInTheDocument();
+    expect(within(overview).getAllByText("İşlemci").length).toBeGreaterThan(0);
+    expect(within(overview).getAllByText(/Fiyat etkisi/).length).toBeGreaterThan(0);
+    expect(within(overview).getAllByText(/Kullanıcı için önemi/).length).toBeGreaterThan(0);
+    expect(within(overview).getAllByText("Editoryal değerlendirme").length).toBeGreaterThan(0);
+    const technicalHeading = screen.getByRole("heading", { name: /Telefon.*sistem/i });
+    expect(overview.compareDocumentPosition(technicalHeading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it("shows only the terms and guides related to the selected category", async () => {
     const page = await CategoryPage({ params: Promise.resolve({ locale: "tr", slug: "kameralar" }) });
     render(page);

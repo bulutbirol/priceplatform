@@ -1,11 +1,12 @@
 import { test, expect } from "@playwright/test";
 
-test("homepage explains product pricing and exposes four categories", async ({ page }) => {
+test("homepage provides search and the complete category path", async ({ page }) => {
   await page.goto("/tr");
-  await expect(page.getByRole("heading", { name: /Bir ürünün fiyatında ne var/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Telefon", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Kamera", exact: true })).toBeVisible();
-  await expect(page.getByText("Marka primi", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Hangi ürünün fiyatını anlamak istiyorsun/i })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Teknoloji ara" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Kişisel Teknoloji/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Telefon/ })).toHaveAttribute("href", "/tr/categories/telefonlar");
+  await expect(page.getByRole("link", { name: "Fiyat faktörleri", exact: true })).toBeVisible();
 });
 
 test("dark theme persists after a reload", async ({ page }) => {

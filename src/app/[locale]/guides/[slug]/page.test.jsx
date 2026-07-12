@@ -16,7 +16,7 @@ describe("GuidePage", () => {
   });
 
   it("localizes guide navigation on English routes", async () => {
-    const page = await GuidePage({ params: Promise.resolve({ locale: "en", slug: "telefon-fiyati-nasil-okunur" }) });
+    const page = await GuidePage({ params: Promise.resolve({ locale: "en", slug: "phone-buying-basics" }) });
     render(page);
 
     expect(screen.getByRole("navigation", { name: "Contents" })).toBeInTheDocument();

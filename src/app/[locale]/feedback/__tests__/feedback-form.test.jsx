@@ -6,4 +6,9 @@ describe("FeedbackForm", () => {
         render(<FeedbackForm locale="en"/>);
         expect(screen.getByText(/Feedback type/i)).toBeInTheDocument();
     });
+    it("renders Turkish labels on Turkish pages", () => {
+        render(<FeedbackForm locale="tr"/>);
+        expect(screen.getByText("Geri bildirim türü")).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: "Geri bildirim gönder" })).toBeInTheDocument();
+    });
 });
